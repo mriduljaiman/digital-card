@@ -76,7 +76,7 @@ export default function EnvelopeScreen({
       <AnimatePresence>
         {phase !== 'done' && (
           <motion.div
-            className="relative z-10"
+            className="relative z-10 flex flex-col items-center"
             style={{ perspective: '1200px' }}
             initial={{ y: 40, opacity: 0, scale: 0.9 }}
             animate={
@@ -102,6 +102,76 @@ export default function EnvelopeScreen({
               isOpening={isOpening}
               onSealCrack={handleSealCrack}
             />
+
+            {/* Animated Click Here arrow — hides once clicked */}
+            <AnimatePresence>
+              {phase === 'idle' && (
+                <motion.div
+                  className="flex flex-col items-center mt-6 pointer-events-none select-none"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.3 } }}
+                  transition={{ delay: 1.5, duration: 0.6 }}
+                >
+                  {/* Arrow pointing UP toward seal */}
+                  <motion.div
+                    className="flex flex-col items-center gap-1"
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    {/* Sparkle dots */}
+                    <div className="flex gap-3 mb-1">
+                      {[0, 0.2, 0.4].map((delay, i) => (
+                        <motion.div
+                          key={i}
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{ background: '#FFD700' }}
+                          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                          transition={{ duration: 1.2, repeat: Infinity, delay }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Arrow SVG pointing up */}
+                    <motion.svg
+                      width="28" height="36"
+                      viewBox="0 0 28 36"
+                      fill="none"
+                      style={{ filter: 'drop-shadow(0 2px 6px rgba(212,175,55,0.5))' }}
+                    >
+                      <path
+                        d="M14 2 L26 18 L19 18 L19 34 L9 34 L9 18 L2 18 Z"
+                        fill="url(#arrowGrad)"
+                        stroke="rgba(255,255,255,0.3)"
+                        strokeWidth="0.5"
+                      />
+                      <defs>
+                        <linearGradient id="arrowGrad" x1="14" y1="2" x2="14" y2="34" gradientUnits="userSpaceOnUse">
+                          <stop offset="0%" stopColor="#FFD700" />
+                          <stop offset="100%" stopColor="#C9A84C" />
+                        </linearGradient>
+                      </defs>
+                    </motion.svg>
+
+                    {/* Click Here text */}
+                    <motion.p
+                      className="text-xs uppercase tracking-[3px] mt-1"
+                      style={{
+                        fontFamily: 'var(--font-cinzel)',
+                        background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        letterSpacing: '3px',
+                      }}
+                      animate={{ opacity: [0.6, 1, 0.6] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      Click Here
+                    </motion.p>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
