@@ -79,9 +79,7 @@ export const defaultWeddingData: WeddingData = {
     { id: '3', name: 'Pandey', relation: 'Father', side: 'bride' },
     { id: '4', name: 'Pandey', relation: 'Mother', side: 'bride' },
   ],
-  // Add photo filenames here after copying to public/photos/ folder
-  // Example: photos: ['/photos/photo1.jpg', '/photos/photo2.jpg'],
-  photos: [],
+  photos: ['/photos/wedding-photo.jpeg'],
   musicEnabled: true,
   musicUrl: '/audio/weddingbeats.mp3',
 };
