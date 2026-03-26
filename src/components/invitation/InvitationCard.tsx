@@ -82,18 +82,6 @@ export default function InvitationCard({ data }: InvitationCardProps) {
         <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
       )}
 
-      {/* Admin button */}
-      <a
-        href="/admin"
-        className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full flex items-center justify-center text-sm opacity-20 hover:opacity-60 transition-opacity"
-        style={{
-          background: 'rgba(0,0,0,0.3)',
-          color: '#FFD700',
-        }}
-        title="Admin Panel"
-      >
-        ⚙
-      </a>
     </motion.div>
   );
 }
