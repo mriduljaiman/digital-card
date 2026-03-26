@@ -81,7 +81,7 @@ export const defaultWeddingData: WeddingData = {
   ],
   photos: ['/photos/wedding-photo.jpeg'],
   musicEnabled: true,
-  musicUrl: '/audio/weddingbeats.mp3',
+  musicUrl: '/audio/mangalye.mp3',
 };
 
 export function getWeddingData(): WeddingData {
