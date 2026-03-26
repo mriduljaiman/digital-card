@@ -1,0 +1,425 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Authentication Models
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+
+  // Profile
+  phone         String?
+  bio           String?
+
+  // Subscription
+  plan          UserPlan  @default(FREE)
+  planExpiry    DateTime?
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  invitations   Invitation[]
+  payments      Payment[]
+  guests        Guest[]
+
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Core Models
+
+model Invitation {
+  id        String   @id @default(cuid())
+  slug      String   @unique // URL-friendly unique identifier
+
+  // User relationship (optional for guest users)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Event Information
+  eventType EventType
+  eventName String?   // Custom event name (optional)
+
+  // Host Details
+  hostName       String?   // Primary host (bride, birthday person, etc.)
+  coHostName     String?   // Co-host (groom, etc.)
+  hostRelation   String?   // "Bride", "Groom", "Birthday Star", etc.
+
+  // Event Details
+  eventDate      DateTime
+  eventTime      String?   // "7:00 PM" - stored as string for flexibility
+  venue          String
+  venueAddress   String?
+  mapLink        String?   // Google Maps link
+
+  // Contact & RSVP
+  rsvpWhatsApp   String?   // WhatsApp number for RSVP
+  contactEmail   String?
+
+  // Theme & Customization
+  themeId        String
+  theme          Theme      @relation(fields: [themeId], references: [id])
+  customMessage  String?   // Custom message from host
+
+  // Media Assets
+  photos         InvitePhoto[]
+
+  // Configuration
+  musicEnabled   Boolean   @default(true)
+  musicUrl       String?   // Path to background music
+  animationSpeed String    @default("normal") // "slow", "normal", "fast"
+
+  // Metadata
+  views          Int       @default(0)
+  downloads      Int       @default(0)
+  shares         Int       @default(0)
+
+  // Timestamps
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  expiresAt      DateTime? // Optional expiry for auto-cleanup
+
+  // Status
+  isActive       Boolean   @default(true)
+  isPublished    Boolean   @default(false)
+
+  // Relations
+  guests         Guest[]
+  analytics      Analytics[]
+
+  @@index([slug])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model Theme {
+  id             String   @id @default(cuid())
+
+  // Theme Identity
+  name           String   // "Royal Wedding", "Modern Birthday", etc.
+  slug           String   @unique // "royal-wedding"
+  description    String?
+  category       EventType
+
+  // Visual Configuration
+  sceneComponent String   // "RoyalMandapScene" - component name to render
+  modelPath      String?  // Path to 3D model file
+  texturePaths   String   @default("") // JSON array as string
+
+  // Color Scheme
+  primaryColor   String   @default("#FFD700") // Gold
+  secondaryColor String   @default("#1A1A2E") // Dark blue
+  accentColor    String   @default("#FFFFFF")
+
+  // Animation Settings
+  cameraPath     String?  // JSON for camera animation keyframes
+  particleConfig String?  // JSON for particle system configuration
+
+  // Audio
+  defaultMusicUrl String?
+
+  // Metadata
+  thumbnail      String?  // Preview image URL
+  isPremium      Boolean  @default(false) // For future monetization
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+
+  // Relations
+  invitations    Invitation[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model InvitePhoto {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  // Photo Details
+  type         PhotoType  // "host", "cohost", "couple", "baby", etc.
+  label        String?    // Display label
+
+  // File Paths
+  originalPath String     // Original uploaded file
+  processedPath String?   // Cropped/resized version
+
+  // Crop Data (for re-editing)
+  cropData     String?    // JSON { x, y, width, height, scale }
+
+  // Metadata
+  fileName     String
+  fileSize     Int        // Bytes
+  mimeType     String
+  width        Int?
+  height       Int?
+
+  sortOrder    Int        @default(0)
+  createdAt    DateTime   @default(now())
+
+  @@index([invitationId])
+}
+
+// Payment Models
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Payment Details
+  amount          Int           // in smallest currency unit (e.g., paise)
+  currency        String        @default("INR")
+  status          PaymentStatus @default(PENDING)
+
+  // Provider Details
+  provider        String        @default("razorpay") // razorpay, stripe
+  providerOrderId String?       @unique
+  providerPaymentId String?     @unique
+
+  // Plan Details
+  plan            UserPlan
+  planDuration    Int           // in months
+
+  // Metadata
+  metadata        String?       // JSON string for additional data
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  paidAt          DateTime?
+
+  @@index([userId])
+  @@index([status])
+}
+
+// Enums
+
+enum EventType {
+  WEDDING
+  BIRTHDAY
+  ENGAGEMENT
+  ANNIVERSARY
+  BABY_SHOWER
+  OTHER
+}
+
+enum PhotoType {
+  HOST          // Primary person (bride, birthday person)
+  COHOST        // Secondary person (groom)
+  COUPLE        // Joint photo
+  BABY          // For baby showers/birthdays
+  FAMILY        // Family photo
+  CUSTOM        // Custom label
+}
+
+enum UserPlan {
+  FREE
+  PRO
+  PREMIUM
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Guest Management & RSVP
+
+model Guest {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  // User relationship (if guest has account)
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Guest Details
+  name         String
+  email        String?
+  phone        String?
+  guestCount   Int        @default(1) // Number of people (guest + companions)
+
+  // RSVP Status
+  rsvpStatus   RsvpStatus @default(PENDING)
+  rsvpDate     DateTime?
+
+  // Additional Info
+  dietaryRestrictions String?
+  specialRequests     String?
+  relationship        String? // "Friend", "Family", "Colleague"
+
+  // Communication
+  inviteSentAt    DateTime?
+  reminderSentAt  DateTime?
+  thankYouSentAt  DateTime?
+
+  // Check-in
+  checkedIn       Boolean   @default(false)
+  checkedInAt     DateTime?
+
+  // Metadata
+  notes           String?
+  tags            String?   // JSON array of tags
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([invitationId])
+  @@index([userId])
+  @@index([rsvpStatus])
+}
+
+enum RsvpStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  MAYBE
+  NO_RESPONSE
+}
+
+// Analytics & Tracking
+
+model Analytics {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  // Event Data
+  eventType    AnalyticsEventType
+  eventData    String?    // JSON string for additional event data
+
+  // User Info
+  visitorId    String?    // Anonymous visitor ID (cookie/fingerprint)
+  ipAddress    String?
+  userAgent    String?
+
+  // Location
+  country      String?
+  city         String?
+
+  // Referrer
+  referrer     String?
+  source       String?    // "direct", "facebook", "whatsapp", "email"
+
+  // Device Info
+  deviceType   String?    // "mobile", "tablet", "desktop"
+  browser      String?
+  os           String?
+
+  timestamp    DateTime   @default(now())
+
+  @@index([invitationId])
+  @@index([eventType])
+  @@index([timestamp])
+}
+
+enum AnalyticsEventType {
+  PAGE_VIEW
+  INVITE_OPEN
+  RSVP_SUBMIT
+  SHARE_CLICK
+  DOWNLOAD_CLICK
+  MAP_CLICK
+  PHONE_CLICK
+  EMAIL_CLICK
+  VIDEO_PLAY
+  MUSIC_PLAY
+  PHOTO_VIEW
+}
+
+// Notifications
+
+model Notification {
+  id        String             @id @default(cuid())
+  userId    String
+
+  // Notification Details
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+
+  // Status
+  read      Boolean            @default(false)
+  readAt    DateTime?
+
+  // Metadata
+  data      String?            // JSON string for additional data
+
+  createdAt DateTime           @default(now())
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  RSVP_RECEIVED
+  GUEST_CHECKED_IN
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  PLAN_EXPIRING
+  NEW_MESSAGE
+  SYSTEM_ALERT
+}

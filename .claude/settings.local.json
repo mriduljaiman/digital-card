@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx prisma init:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx prisma generate)",
+      "Bash(npx prisma:*)",
+      "Bash(ls:*)",
+      "Bash(src/app/api/invites/[id]/stats/route.ts << 'EOF'\nimport { NextRequest, NextResponse } from 'next/server';\nimport { prisma } from '@/lib/db';\n\nexport async function PATCH\\(\n  request: NextRequest,\n  { params }: { params: { id: string } }\n\\) {\n  try {\n    const { id } = params;\n    const body = await request.json\\(\\);\n    const { type } = body; // 'view', 'download', or 'share'\n\n    if \\(!['view', 'download', 'share'].includes\\(type\\)\\) {\n      return NextResponse.json\\(\n        { success: false, error: 'Invalid stat type' },\n        { status: 400 }\n      \\);\n    }\n\n    // Update the corresponding stat\n    const updateData: any = {};\n    if \\(type === 'view'\\) {\n      updateData.views = { increment: 1 };\n    } else if \\(type === 'download'\\) {\n      updateData.downloads = { increment: 1 };\n    } else if \\(type === 'share'\\) {\n      updateData.shares = { increment: 1 };\n    }\n\n    const invitation = await prisma.invitation.update\\({\n      where: { id },\n      data: updateData,\n      select: {\n        id: true,\n        views: true,\n        downloads: true,\n        shares: true,\n      },\n    }\\);\n\n    return NextResponse.json\\({\n      success: true,\n      data: invitation,\n    }\\);\n  } catch \\(error\\) {\n    console.error\\('Error updating stats:', error\\);\n    return NextResponse.json\\(\n      { success: false, error: 'Failed to update stats' },\n      { status: 500 }\n    \\);\n  }\n}\n\nexport async function GET\\(\n  request: NextRequest,\n  { params }: { params: { id: string } }\n\\) {\n  try {\n    const { id } = params;\n\n    const invitation = await prisma.invitation.findUnique\\({\n      where: { id },\n      select: {\n        id: true,\n        views: true,\n        downloads: true,\n        shares: true,\n        createdAt: true,\n      },\n    }\\);\n\n    if \\(!invitation\\) {\n      return NextResponse.json\\(\n        { success: false, error: 'Invitation not found' },\n        { status: 404 }\n      \\);\n    }\n\n    return NextResponse.json\\({\n      success: true,\n      data: invitation,\n    }\\);\n  } catch \\(error\\) {\n    console.error\\('Error fetching stats:', error\\);\n    return NextResponse.json\\(\n      { success: false, error: 'Failed to fetch stats' },\n      { status: 500 }\n    \\);\n  }\n}\nEOF)",
+      "Bash(test:*)",
+      "Bash(npm run build:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npx next info:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

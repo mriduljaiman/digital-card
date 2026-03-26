@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Wedding Theme Root Variables ─────────────────────────────── */
+:root {
+  --gold: #D4AF37;
+  --gold-light: #FFD700;
+  --gold-dark: #8B6914;
+  --cream: #FFF8E7;
+  --cream-dark: #FAE8B0;
+  --blush: #FFB6C1;
+  --blush-dark: #E88FAA;
+  --ivory: #FFFFF0;
+  --burgundy: #800020;
+
+  /* shadcn compatibility */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+}
+
+/* ── Base ────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FFF8E7;
+  color: #3d2b00;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 248, 225, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.4);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.7);
+}
+
+/* ── Wedding Background ──────────────────────────────────────────── */
+.wedding-bg {
+  background: radial-gradient(ellipse at top, #FFF5D6 0%, #FFF0C0 30%, #FAE8A0 60%, #FFF5D6 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.wedding-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4AF37' fill-opacity='0.04'%3E%3Ccircle cx='40' cy='40' r='3'/%3E%3Cpath d='M40 15 L43 30 L40 25 L37 30 Z'/%3E%3Cpath d='M40 65 L43 50 L40 55 L37 50 Z'/%3E%3Cpath d='M15 40 L30 43 L25 40 L30 37 Z'/%3E%3Cpath d='M65 40 L50 43 L55 40 L50 37 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  pointer-events: none;
+}
+
+/* ── Utility Classes ─────────────────────────────────────────────── */
+.gold-text {
+  background: linear-gradient(135deg, #8B6914, #C9A84C, #FFD700, #C9A84C, #8B6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-border {
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+}
+
+.gold-card {
+  background: linear-gradient(145deg, rgba(255, 248, 225, 0.95), rgba(255, 240, 195, 0.9));
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 8px 32px rgba(180, 130, 40, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.glass {
+  background: rgba(255, 248, 225, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* ── Framer Motion 3D perspective ────────────────────────────────── */
+.envelope-perspective {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* ── Animations ──────────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes petalFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* ── Input focus styles ───────────────────────────────────────────── */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(212, 175, 55, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
+}
+
+/* ── Selection color ─────────────────────────────────────────────── */
+::selection {
+  background: rgba(212, 175, 55, 0.25);
+  color: inherit;
+}
+
+/* ── Photo gallery masonry ───────────────────────────────────────── */
+.masonry-grid {
+  column-count: 2;
+  column-gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .masonry-grid { column-count: 3; }
+}
+
+@media (min-width: 1024px) {
+  .masonry-grid { column-count: 4; }
+}
+
+.masonry-grid > * {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}

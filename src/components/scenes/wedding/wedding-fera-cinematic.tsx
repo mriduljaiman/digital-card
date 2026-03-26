@@ -1,0 +1,233 @@
+import { Suspense, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Environment, PerspectiveCamera, Float } from '@react-three/drei';
+import * as THREE from 'three';
+import { FireParticles, PetalParticles, GoldenDust, Sparkles } from '../effects/particle-systems';
+import { CoupleFeraIllusion } from '../effects/photo-cutout-3d';
+
+interface WeddingFeraCinematicProps {
+  couplePath?: string;
+  hostName: string;
+  coHostName?: string;
+  eventDate: string;
+  theme?: any;
+}
+
+export function WeddingFeraCinematic({
+  couplePath = '/uploads/couple-cutout.png',
+  hostName,
+  coHostName,
+  eventDate,
+  theme,
+}: WeddingFeraCinematicProps) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  // Slow camera orbit
+  useFrame(({ clock, camera }) => {
+    const time = clock.getElapsedTime();
+
+    // Cinematic camera movement
+    camera.position.x = Math.sin(time * 0.1) * 8;
+    camera.position.y = 3 + Math.sin(time * 0.15) * 1;
+    camera.position.z = Math.cos(time * 0.1) * 8;
+    camera.lookAt(0, 1, 0);
+  });
+
+  return (
+    <>
+      <group ref={groupRef}>
+        {/* Camera */}
+        <PerspectiveCamera makeDefault position={[6, 3, 6]} fov={60} />
+
+        {/* Ambient lighting */}
+        <ambientLight intensity={0.3} />
+
+        {/* Key light (warm) */}
+        <spotLight
+          position={[5, 10, 5]}
+          angle={0.5}
+          penumbra={1}
+          intensity={2}
+          castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          color="#FFE4B5"
+        />
+
+        {/* Fill light (cool) */}
+        <spotLight
+          position={[-5, 8, -3]}
+          angle={0.4}
+          penumbra={1}
+          intensity={1}
+          color="#B0E0E6"
+        />
+
+        {/* Sacred fire in center */}
+        <group position={[0, 0, 0]}>
+          {/* Fire bowl */}
+          <mesh position={[0, -0.2, 0]} receiveShadow>
+            <cylinderGeometry args={[0.8, 1, 0.4, 32]} />
+            <meshStandardMaterial
+              color="#8B4513"
+              metalness={0.3}
+              roughness={0.7}
+            />
+          </mesh>
+
+          {/* Fire particles */}
+          <FireParticles position={[0, 0.5, 0]} count={150} />
+
+          {/* Fire glow */}
+          <pointLight
+            position={[0, 1, 0]}
+            intensity={3}
+            distance={8}
+            color="#FF6600"
+          />
+
+          {/* Inner glow */}
+          <pointLight
+            position={[0, 0.5, 0]}
+            intensity={2}
+            distance={3}
+            color="#FFAA00"
+          />
+        </group>
+
+        {/* Sacred mandap structure */}
+        <group position={[0, 0, 0]}>
+          {/* Four pillars */}
+          {[[3, 0, 3], [-3, 0, 3], [-3, 0, -3], [3, 0, -3]].map((pos, i) => (
+            <group key={i} position={pos as any}>
+              {/* Pillar */}
+              <mesh castShadow>
+                <cylinderGeometry args={[0.15, 0.15, 5, 16]} />
+                <meshStandardMaterial
+                  color={theme?.colors?.primary || '#FFD700'}
+                  metalness={0.8}
+                  roughness={0.2}
+                />
+              </mesh>
+
+              {/* Pillar top decoration */}
+              <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+                <mesh position={[0, 2.7, 0]}>
+                  <sphereGeometry args={[0.25, 16, 16]} />
+                  <meshStandardMaterial
+                    color="#FFD700"
+                    emissive="#FFD700"
+                    emissiveIntensity={0.5}
+                    metalness={1}
+                    roughness={0.1}
+                  />
+                </mesh>
+              </Float>
+
+              {/* Light at pillar */}
+              <pointLight
+                position={[0, 2.5, 0]}
+                intensity={0.5}
+                distance={3}
+                color="#FFD700"
+              />
+            </group>
+          ))}
+
+          {/* Roof/canopy */}
+          <mesh position={[0, 4, 0]} receiveShadow>
+            <cylinderGeometry args={[4.5, 3.5, 0.2, 32]} />
+            <meshStandardMaterial
+              color="#8B0000"
+              metalness={0.3}
+              roughness={0.6}
+            />
+          </mesh>
+
+          {/* Decorative cloth draping simulation */}
+          {[0, 90, 180, 270].map((angle, i) => (
+            <mesh
+              key={i}
+              position={[
+                Math.cos((angle * Math.PI) / 180) * 3,
+                2.5,
+                Math.sin((angle * Math.PI) / 180) * 3,
+              ]}
+              rotation={[0, (angle * Math.PI) / 180, 0]}
+            >
+              <planeGeometry args={[1, 3]} />
+              <meshStandardMaterial
+                color="#DC143C"
+                side={THREE.DoubleSide}
+                transparent
+                opacity={0.7}
+              />
+            </mesh>
+          ))}
+        </group>
+
+        {/* Floor */}
+        <mesh
+          position={[0, -0.5, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          receiveShadow
+        >
+          <planeGeometry args={[20, 20]} />
+          <meshStandardMaterial
+            color="#F5E6D3"
+            roughness={0.8}
+          />
+        </mesh>
+
+        {/* Rangoli pattern on floor */}
+        <mesh position={[0, -0.48, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[1.5, 3, 32]} />
+          <meshStandardMaterial
+            color="#FF6B6B"
+            emissive="#FF6B6B"
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+
+        {/* Couple in fera orbit */}
+        {couplePath && (
+          <Suspense fallback={null}>
+            <CoupleFeraIllusion
+              couplePath={couplePath}
+              position={[0, 0.5, 0]}
+              scale={1}
+            />
+          </Suspense>
+        )}
+
+        {/* Falling petals */}
+        <PetalParticles position={[0, 6, 0]} count={80} />
+
+        {/* Golden dust particles */}
+        <GoldenDust count={300} />
+
+        {/* Sparkles around mandap */}
+        <Sparkles position={[0, 3, 0]} count={100} scale={10} />
+
+        {/* Names display */}
+        <Float speed={1} rotationIntensity={0} floatIntensity={0.3}>
+          <group position={[0, 5.5, 0]}>
+            <mesh>
+              <planeGeometry args={[4, 1]} />
+              <meshBasicMaterial
+                color={theme?.colors?.primary || '#FFD700'}
+                transparent
+                opacity={0.8}
+              />
+            </mesh>
+          </group>
+        </Float>
+
+        {/* Environment */}
+        <Suspense fallback={null}>
+          <Environment preset="sunset" />
+        </Suspense>
+      </group>
+    </>
+  );
+}
