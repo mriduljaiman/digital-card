@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Cinzel, Great_Vibes } from 'next/font/google';
+import { SessionProvider } from '@/components/auth/session-provider';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -55,7 +56,7 @@ export default function RootLayout({
         className={`${playfair.variable} ${cinzel.variable} ${greatVibes.variable} antialiased`}
         style={{ fontFamily: 'var(--font-playfair), serif' }}
       >
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
