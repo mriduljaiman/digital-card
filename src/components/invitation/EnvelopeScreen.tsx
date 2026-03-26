@@ -124,9 +124,9 @@ export default function EnvelopeScreen({
                       {[0, 0.2, 0.4].map((delay, i) => (
                         <motion.div
                           key={i}
-                          className="w-1.5 h-1.5 rounded-full"
-                          style={{ background: '#FFD700' }}
-                          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                          className="w-2 h-2 rounded-full"
+                          style={{ background: '#8B0000' }}
+                          animate={{ opacity: [0.4, 1, 0.4], scale: [0.8, 1.3, 0.8] }}
                           transition={{ duration: 1.2, repeat: Infinity, delay }}
                         />
                       ))}
@@ -134,36 +134,36 @@ export default function EnvelopeScreen({
 
                     {/* Arrow SVG pointing up */}
                     <motion.svg
-                      width="28" height="36"
+                      width="32" height="42"
                       viewBox="0 0 28 36"
                       fill="none"
-                      style={{ filter: 'drop-shadow(0 2px 6px rgba(212,175,55,0.5))' }}
+                      style={{ filter: 'drop-shadow(0 3px 8px rgba(139,0,0,0.5))' }}
                     >
                       <path
                         d="M14 2 L26 18 L19 18 L19 34 L9 34 L9 18 L2 18 Z"
-                        fill="url(#arrowGrad)"
-                        stroke="rgba(255,255,255,0.3)"
-                        strokeWidth="0.5"
+                        fill="url(#arrowGrad2)"
+                        stroke="rgba(255,255,255,0.4)"
+                        strokeWidth="0.8"
                       />
                       <defs>
-                        <linearGradient id="arrowGrad" x1="14" y1="2" x2="14" y2="34" gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor="#FFD700" />
-                          <stop offset="100%" stopColor="#C9A84C" />
+                        <linearGradient id="arrowGrad2" x1="14" y1="2" x2="14" y2="34" gradientUnits="userSpaceOnUse">
+                          <stop offset="0%" stopColor="#CC0000" />
+                          <stop offset="100%" stopColor="#8B0000" />
                         </linearGradient>
                       </defs>
                     </motion.svg>
 
                     {/* Click Here text */}
                     <motion.p
-                      className="text-xs uppercase tracking-[3px] mt-1"
+                      className="text-sm uppercase mt-2"
                       style={{
                         fontFamily: 'var(--font-cinzel)',
-                        background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        letterSpacing: '3px',
+                        color: '#8B0000',
+                        letterSpacing: '4px',
+                        fontWeight: '700',
+                        textShadow: '0 1px 4px rgba(255,255,255,0.6)',
                       }}
-                      animate={{ opacity: [0.6, 1, 0.6] }}
+                      animate={{ opacity: [0.7, 1, 0.7] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
                     >
                       Click Here
@@ -184,15 +184,18 @@ export default function EnvelopeScreen({
         transition={{ duration: 1, delay: 0.8 }}
       >
         <p
-          className="text-3xl"
           style={{
             fontFamily: 'var(--font-script), cursive',
-            background: 'linear-gradient(135deg, #C9A84C, #FFD700, #C9A84C)',
+            fontSize: 'clamp(2.2rem, 8vw, 3.2rem)',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #8B6914, #C9A84C, #FFD700, #C9A84C, #8B6914)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            textShadow: 'none',
+            filter: 'drop-shadow(0 2px 4px rgba(180,130,40,0.3))',
           }}
         >
-          {groomName} & {brideName}
+          {groomName} &amp; {brideName}
         </p>
       </motion.div>
 
