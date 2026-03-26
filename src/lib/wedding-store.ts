@@ -79,8 +79,11 @@ export const defaultWeddingData: WeddingData = {
     { id: '3', name: 'Pandey', relation: 'Father', side: 'bride' },
     { id: '4', name: 'Pandey', relation: 'Mother', side: 'bride' },
   ],
+  // Add photo filenames here after copying to public/photos/ folder
+  // Example: photos: ['/photos/photo1.jpg', '/photos/photo2.jpg'],
   photos: [],
-  musicEnabled: false,
+  musicEnabled: true,
+  musicUrl: '/audio/weddingbeats.mp3',
 };
 
 export function getWeddingData(): WeddingData {
@@ -89,7 +92,14 @@ export function getWeddingData(): WeddingData {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return defaultWeddingData;
     const parsed = JSON.parse(stored) as Partial<WeddingData>;
-    return { ...defaultWeddingData, ...parsed };
+    return {
+      ...defaultWeddingData,
+      ...parsed,
+      // Music and photos always fall back to code defaults if not set in localStorage
+      musicEnabled: parsed.musicEnabled ?? defaultWeddingData.musicEnabled,
+      musicUrl: parsed.musicUrl || defaultWeddingData.musicUrl,
+      photos: parsed.photos?.length ? parsed.photos : defaultWeddingData.photos,
+    };
   } catch {
     return defaultWeddingData;
   }
