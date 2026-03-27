@@ -222,10 +222,10 @@ function EnvelopeBody({
 
   return (
     <div
-      className="relative select-none"
+      className="relative select-none w-full"
       style={{
-        width: envelopeWidth,
-        height: envelopeHeight,
+        width: 'min(380px, 90vw)',
+        height: `calc(min(380px, 90vw) * ${envelopeHeight / envelopeWidth})`,
         filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.25))',
       }}
     >

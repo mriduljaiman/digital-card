@@ -6,6 +6,7 @@ import EventSection from './EventSection';
 import FamilySection from './FamilySection';
 import PhotoGallery from './PhotoGallery';
 import MusicPlayer from './MusicPlayer';
+import InstallPrompt from './InstallPrompt';
 
 interface InvitationCardProps {
   data: WeddingData;
@@ -81,6 +82,9 @@ export default function InvitationCard({ data }: InvitationCardProps) {
       {data.musicEnabled && (
         <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
       )}
+
+      {/* PWA Install Prompt */}
+      <InstallPrompt />
 
     </motion.div>
   );

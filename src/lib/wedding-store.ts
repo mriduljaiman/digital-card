@@ -8,11 +8,11 @@ export const defaultWeddingData: WeddingData = {
   groomName: 'Mridul',
   brideName: 'Vijaya',
   groomFatherName: 'Pankaj Jaiman',
-  brideFatherName: 'Pandey',
+  brideFatherName: 'Sanjay Pandey',
   initials: 'M & V',
   weddingDate: '2026-04-20',
-  mainVenue: 'Viratnagar Hotel',
-  mainVenueAddress: 'Viratnagar Hotel',
+  mainVenue: 'Dayal Garden, Viratnagar',
+  mainVenueAddress: 'Dayal Garden, Viratnagar | Stay: Tiger Paradise, Viratnagar',
   invitationMessage:
     'Together with their families, we joyfully invite you to celebrate the union of',
   events: [
@@ -76,8 +76,8 @@ export const defaultWeddingData: WeddingData = {
   familyMembers: [
     { id: '1', name: 'Pankaj Jaiman', relation: 'Father', side: 'groom' },
     { id: '2', name: 'Suman Jaiman', relation: 'Mother', side: 'groom' },
-    { id: '3', name: 'Pandey', relation: 'Father', side: 'bride' },
-    { id: '4', name: 'Pandey', relation: 'Mother', side: 'bride' },
+    { id: '3', name: 'Sanjay Pandey', relation: 'Father', side: 'bride' },
+    { id: '4', name: 'Shushma Pandey', relation: 'Mother', side: 'bride' },
   ],
   photos: ['/photos/wedding-photo.jpeg'],
   musicEnabled: true,

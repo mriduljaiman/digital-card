@@ -167,6 +167,31 @@ select:focus {
   color: inherit;
 }
 
+/* ── Responsive typography ───────────────────────────────────────── */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 380px) {
+  html { font-size: 14px; }
+}
+
+@media (min-width: 1280px) {
+  html { font-size: 18px; }
+}
+
+/* Prevent horizontal overflow */
+main, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Touch-friendly tap targets */
+button, a {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 /* ── Photo gallery masonry ───────────────────────────────────────── */
 .masonry-grid {
   column-count: 2;
