@@ -10,6 +10,7 @@ interface LocationCard {
   address: string;
   date: string;
   mapQuery: string;
+  mapDirectUrl?: string;
   color: 'gold' | 'pink' | 'green';
 }
 
@@ -48,7 +49,8 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
       venue: 'Ghar',
       address: homeAddress,
       date: 'Sun, 19 April 2026',
-      mapQuery: homeAddress,
+      mapQuery: '',
+      mapDirectUrl: 'https://maps.app.goo.gl/kNGVDVMrZMQfWDAj6',
       color: 'green',
     },
   ];
@@ -92,11 +94,11 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
     },
   };
 
-  const openMaps = (query: string) => {
-    window.open(
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
-      '_blank'
-    );
+  const openMaps = (loc: LocationCard) => {
+    const url = loc.mapDirectUrl
+      ? loc.mapDirectUrl
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.mapQuery)}`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -226,7 +228,7 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
 
                 {/* Maps button */}
                 <button
-                  onClick={() => openMaps(loc.mapQuery)}
+                  onClick={() => openMaps(loc)}
                   className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-opacity active:opacity-80"
                   style={{
                     background: s.btn,
