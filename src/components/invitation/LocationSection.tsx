@@ -23,34 +23,33 @@ interface LocationSectionProps {
 export default function LocationSection({ mainVenue, homeAddress, onBack }: LocationSectionProps) {
   const locations: LocationCard[] = [
     {
-      title: 'Mahila Sangeet',
-      subtitle: 'Saturday, 18 April 2026 · 6:00 PM',
-      icon: '🎵',
-      venue: 'Chanda Marriage Garden',
-      address: 'Chanda Marriage Garden, Viratnagar',
-      date: 'Sat, 18 April 2026',
-      mapQuery: 'Chanda Marriage Garden Viratnagar',
+      title: 'Ghar',
+      subtitle: 'Ganesh Nimantran · Haldi · Mehndi · Ghudchadi',
+      icon: '🏠',
+      venue: '148-B Swarnpuri Kanak Vrindavan',
+      address: 'Sirsi Road, Jaipur',
+      date: '8 Apr, 17 Apr & 20 Apr 2026',
+      mapQuery: '148-B Swarnpuri Kanak Vrindavan Sirsi Road Jaipur',
       color: 'gold',
     },
     {
-      title: 'Wedding',
-      subtitle: 'Monday, 20 April 2026',
-      icon: '💒',
-      venue: 'Dayal Garden',
-      address: mainVenue,
-      date: 'Mon, 20 April 2026',
-      mapQuery: 'Dayal Garden Viratnagar',
+      title: 'Chanda Paradise Garden',
+      subtitle: 'Lagn Tika · Mahila Sangeet · Pratibhoj',
+      icon: '🌸',
+      venue: 'Chanda Paradise Garden',
+      address: 'Panchyawala, Sirsi Road, Jaipur',
+      date: 'Saturday, 18 April 2026',
+      mapQuery: 'Chanda Paradise Garden Panchyawala Sirsi Road Jaipur',
       color: 'pink',
     },
     {
-      title: 'Haldi · Mehndi · Chak Bhat',
-      subtitle: 'Sunday, 19 April 2026',
-      icon: '🌼',
-      venue: 'Ghar',
-      address: homeAddress,
-      date: 'Sun, 19 April 2026',
-      mapQuery: '',
-      mapDirectUrl: 'https://maps.app.goo.gl/kNGVDVMrZMQfWDAj6',
+      title: 'Dayal Garden',
+      subtitle: 'PaniGrahan Sanskar · Shubh Lagnananusar',
+      icon: '💒',
+      venue: 'Dayal Garden',
+      address: 'Dayal Garden, Viratnagar',
+      date: 'Monday, 20 April 2026',
+      mapQuery: 'Dayal Garden Viratnagar',
       color: 'green',
     },
   ];
@@ -120,8 +119,8 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
           <span style={{ color: '#C9A84C', fontSize: '18px' }}>‹</span>
         </div>
         <span
-          className="text-sm"
-          style={{ color: 'rgba(160,120,60,0.8)', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}
+          className="text-sm font-bold"
+          style={{ color: '#8B6914', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}
         >
           Back
         </span>

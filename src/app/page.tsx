@@ -25,6 +25,21 @@ export default function HomePage() {
     setData(getWeddingData());
   }, []);
 
+  // Browser back button support
+  useEffect(() => {
+    window.history.replaceState({ view: 'envelope' }, '');
+    const onPopState = (e: PopStateEvent) => {
+      setView((e.state?.view as View) || 'envelope');
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const navigate = (newView: View) => {
+    window.history.pushState({ view: newView }, '');
+    setView(newView);
+  };
+
   if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center wedding-bg">
@@ -58,7 +73,7 @@ export default function HomePage() {
               initials={data.initials}
               groomName={data.groomName}
               brideName={data.brideName}
-              onOpen={() => setTimeout(() => setView('selection'), 700)}
+              onOpen={() => setTimeout(() => navigate('selection'), 700)}
             />
           </motion.div>
         )}
@@ -68,15 +83,19 @@ export default function HomePage() {
             <SelectionScreen
               groomName={data.groomName}
               brideName={data.brideName}
-              onSelectInvitation={() => setView('invitation')}
-              onSelectLocation={() => setView('location')}
+              onSelectInvitation={() => navigate('invitation')}
+              onSelectLocation={() => navigate('location')}
             />
           </motion.div>
         )}
 
         {view === 'invitation' && (
           <motion.div key="invitation" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <InvitationCard data={data} onBack={() => setView('selection')} />
+            <InvitationCard
+              data={data}
+              onBack={() => window.history.back()}
+              onLocation={() => navigate('location')}
+            />
           </motion.div>
         )}
 
@@ -85,7 +104,7 @@ export default function HomePage() {
             <LocationSection
               mainVenue={data.mainVenue}
               homeAddress={data.homeAddress}
-              onBack={() => setView('selection')}
+              onBack={() => window.history.back()}
             />
           </motion.div>
         )}

@@ -11,6 +11,7 @@ import InstallPrompt from './InstallPrompt';
 interface InvitationCardProps {
   data: WeddingData;
   onBack?: () => void;
+  onLocation?: () => void;
 }
 
 function formatMainDate(dateStr: string): string {
@@ -27,7 +28,7 @@ function formatMainDate(dateStr: string): string {
   }
 }
 
-export default function InvitationCard({ data, onBack }: InvitationCardProps) {
+export default function InvitationCard({ data, onBack, onLocation }: InvitationCardProps) {
   return (
     <motion.div
       className="min-h-screen relative overflow-x-hidden"
@@ -63,13 +64,16 @@ export default function InvitationCard({ data, onBack }: InvitationCardProps) {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
             }}
           >
-            <span style={{ color: '#C9A84C', fontSize: '18px' }}>‹</span>
+            <span style={{ color: '#8B6914', fontSize: '18px', fontWeight: 'bold' }}>‹</span>
           </div>
+          <span className="text-sm font-bold" style={{ color: '#8B6914', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}>
+            Back
+          </span>
         </button>
       )}
 
       {/* Hero Section */}
-      <HeroSection data={data} />
+      <HeroSection data={data} onLocation={onLocation} />
 
       {/* Ornamental divider */}
       <OrnamentDivider />
@@ -112,7 +116,7 @@ export default function InvitationCard({ data, onBack }: InvitationCardProps) {
   );
 }
 
-function HeroSection({ data }: { data: WeddingData }) {
+function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () => void }) {
   return (
     <motion.div
       className="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center"
@@ -260,6 +264,25 @@ function HeroSection({ data }: { data: WeddingData }) {
         >
           📍 {data.mainVenueAddress}
         </p>
+
+        {onLocation && (
+          <button
+            onClick={onLocation}
+            className="mt-4 flex items-center gap-2 px-5 py-2.5 rounded-full mx-auto"
+            style={{
+              background: 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(255,213,79,0.12))',
+              border: '1.5px solid rgba(212,175,55,0.45)',
+              color: '#8B6914',
+              fontFamily: 'var(--font-cinzel)',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              letterSpacing: '1.5px',
+            }}
+          >
+            <span>🗺️</span>
+            <span>VIEW ALL VENUES</span>
+          </button>
+        )}
       </motion.div>
 
       {/* Scroll indicator */}
