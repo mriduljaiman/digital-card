@@ -94,7 +94,9 @@ export function getWeddingData(): WeddingData {
     return {
       ...defaultWeddingData,
       ...parsed,
-      // Music and photos always fall back to code defaults if not set in localStorage
+      // Always use code defaults for these — never override from localStorage
+      events: defaultWeddingData.events,
+      familyMembers: defaultWeddingData.familyMembers,
       musicEnabled: parsed.musicEnabled ?? defaultWeddingData.musicEnabled,
       musicUrl: parsed.musicUrl || defaultWeddingData.musicUrl,
       photos: parsed.photos?.length ? parsed.photos : defaultWeddingData.photos,
