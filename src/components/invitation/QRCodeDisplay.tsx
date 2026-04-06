@@ -10,20 +10,18 @@ interface QRCodeDisplayProps {
 
 // Draw a heart shape centered at (cx, cy) with given size
 function drawHeart(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
-  const s = size * 0.48;
-  ctx.save();
-  ctx.translate(cx, cy + s * 0.2);
-  ctx.beginPath();
-  ctx.moveTo(0, s * 0.5);
-  // Left curve
-  ctx.bezierCurveTo(-s * 0.05, s * 0.8, -s, s * 0.6, -s, s * 0.1);
-  ctx.bezierCurveTo(-s, -s * 0.4, -s * 0.3, -s * 0.6, 0, -s * 0.2);
-  // Right curve
-  ctx.bezierCurveTo(s * 0.3, -s * 0.6, s, -s * 0.4, s, s * 0.1);
-  ctx.bezierCurveTo(s, s * 0.6, s * 0.05, s * 0.8, 0, s * 0.5);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
+  const s = size * 0.46;
+  const path = new Path2D();
+  // Start at the bottom tip of the heart
+  path.moveTo(cx, cy + s * 0.9);
+  // Right lobe
+  path.bezierCurveTo(cx + s * 0.1, cy + s * 0.7, cx + s * 1.1, cy + s * 0.5, cx + s * 1.0, cy - s * 0.1);
+  path.bezierCurveTo(cx + s * 0.95, cy - s * 0.7, cx + s * 0.4, cy - s * 0.9, cx, cy - s * 0.4);
+  // Left lobe
+  path.bezierCurveTo(cx - s * 0.4, cy - s * 0.9, cx - s * 0.95, cy - s * 0.7, cx - s * 1.0, cy - s * 0.1);
+  path.bezierCurveTo(cx - s * 1.1, cy + s * 0.5, cx - s * 0.1, cy + s * 0.7, cx, cy + s * 0.9);
+  path.closePath();
+  ctx.fill(path);
 }
 
 // Rounded square for finder patterns (the 3 corner squares)
@@ -84,7 +82,7 @@ export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayPr
       // Draw data modules as hearts, finder zones as rounded squares
       for (let row = 0; row < size; row++) {
         for (let col = 0; col < size; col++) {
-          const isDark = modules[row * size + col] === 1;
+          const isDark = !!modules[row * size + col];
           if (!isDark) continue;
 
           const x = padding + col * cellSize;
