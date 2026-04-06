@@ -30,4 +30,5 @@ export interface WeddingData {
   photos: string[];
   musicEnabled: boolean;
   musicUrl?: string;
+  homeAddress: string;
 }

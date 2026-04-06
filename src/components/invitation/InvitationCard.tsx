@@ -10,6 +10,7 @@ import InstallPrompt from './InstallPrompt';
 
 interface InvitationCardProps {
   data: WeddingData;
+  onBack?: () => void;
 }
 
 function formatMainDate(dateStr: string): string {
@@ -26,7 +27,7 @@ function formatMainDate(dateStr: string): string {
   }
 }
 
-export default function InvitationCard({ data }: InvitationCardProps) {
+export default function InvitationCard({ data, onBack }: InvitationCardProps) {
   return (
     <motion.div
       className="min-h-screen relative overflow-x-hidden"
@@ -45,6 +46,27 @@ export default function InvitationCard({ data }: InvitationCardProps) {
           backgroundSize: '60px 60px',
         }}
       />
+
+      {/* Back button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="fixed top-4 left-4 z-50 flex items-center gap-2"
+          style={{ minHeight: '44px' }}
+        >
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center"
+            style={{
+              background: 'rgba(255,248,225,0.85)',
+              border: '1px solid rgba(212,175,55,0.4)',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            }}
+          >
+            <span style={{ color: '#C9A84C', fontSize: '18px' }}>‹</span>
+          </div>
+        </button>
+      )}
 
       {/* Hero Section */}
       <HeroSection data={data} />

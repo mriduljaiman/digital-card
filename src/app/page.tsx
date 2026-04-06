@@ -3,21 +3,27 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import EnvelopeScreen from '@/components/invitation/EnvelopeScreen';
+import SelectionScreen from '@/components/invitation/SelectionScreen';
 import InvitationCard from '@/components/invitation/InvitationCard';
+import LocationSection from '@/components/invitation/LocationSection';
 import { getWeddingData } from '@/lib/wedding-store';
 import { WeddingData } from '@/types/wedding';
 
+type View = 'envelope' | 'selection' | 'invitation' | 'location';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  exit:    { opacity: 0, y: -16, transition: { duration: 0.35 } },
+};
+
 export default function HomePage() {
   const [data, setData] = useState<WeddingData | null>(null);
-  const [showCard, setShowCard] = useState(false);
+  const [view, setView] = useState<View>('envelope');
 
   useEffect(() => {
     setData(getWeddingData());
   }, []);
-
-  const handleEnvelopeOpen = () => {
-    setTimeout(() => setShowCard(true), 800);
-  };
 
   if (!data) {
     return (
@@ -45,28 +51,45 @@ export default function HomePage() {
   return (
     <main>
       <AnimatePresence mode="wait">
-        {!showCard ? (
-          <motion.div
-            key="envelope"
-            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.6 } }}
-          >
+
+        {view === 'envelope' && (
+          <motion.div key="envelope" variants={pageVariants} initial="initial" animate="animate" exit="exit">
             <EnvelopeScreen
               initials={data.initials}
               groomName={data.groomName}
               brideName={data.brideName}
-              onOpen={handleEnvelopeOpen}
+              onOpen={() => setTimeout(() => setView('selection'), 700)}
             />
           </motion.div>
-        ) : (
-          <motion.div
-            key="card"
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
-            <InvitationCard data={data} />
+        )}
+
+        {view === 'selection' && (
+          <motion.div key="selection" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <SelectionScreen
+              groomName={data.groomName}
+              brideName={data.brideName}
+              onSelectInvitation={() => setView('invitation')}
+              onSelectLocation={() => setView('location')}
+            />
           </motion.div>
         )}
+
+        {view === 'invitation' && (
+          <motion.div key="invitation" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <InvitationCard data={data} onBack={() => setView('selection')} />
+          </motion.div>
+        )}
+
+        {view === 'location' && (
+          <motion.div key="location" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <LocationSection
+              mainVenue={data.mainVenue}
+              homeAddress={data.homeAddress}
+              onBack={() => setView('selection')}
+            />
+          </motion.div>
+        )}
+
       </AnimatePresence>
     </main>
   );

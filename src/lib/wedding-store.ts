@@ -80,6 +80,7 @@ export const defaultWeddingData: WeddingData = {
     { id: '4', name: 'Shushma Pandey', relation: 'Mother', side: 'bride' },
   ],
   photos: ['/photos/wedding-photo.jpeg'],
+  homeAddress: 'Jaiman Niwas, Viratnagar',
   musicEnabled: true,
   musicUrl: '/audio/mangalye.mp3',
 };
