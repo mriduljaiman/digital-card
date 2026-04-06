@@ -8,42 +8,11 @@ interface QRCodeDisplayProps {
   initials?: string;
 }
 
-// Draw a heart shape centered at (cx, cy) with given size
-function drawHeart(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
-  const s = size * 0.46;
-  const path = new Path2D();
-  // Start at the bottom tip of the heart
-  path.moveTo(cx, cy + s * 0.9);
-  // Right lobe
-  path.bezierCurveTo(cx + s * 0.1, cy + s * 0.7, cx + s * 1.1, cy + s * 0.5, cx + s * 1.0, cy - s * 0.1);
-  path.bezierCurveTo(cx + s * 0.95, cy - s * 0.7, cx + s * 0.4, cy - s * 0.9, cx, cy - s * 0.4);
-  // Left lobe
-  path.bezierCurveTo(cx - s * 0.4, cy - s * 0.9, cx - s * 0.95, cy - s * 0.7, cx - s * 1.0, cy - s * 0.1);
-  path.bezierCurveTo(cx - s * 1.1, cy + s * 0.5, cx - s * 0.1, cy + s * 0.7, cx, cy + s * 0.9);
-  path.closePath();
-  ctx.fill(path);
-}
-
-// Rounded square for finder patterns (the 3 corner squares)
-function drawRoundedSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, r: number) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + size - r, y);
-  ctx.quadraticCurveTo(x + size, y, x + size, y + r);
-  ctx.lineTo(x + size, y + size - r);
-  ctx.quadraticCurveTo(x + size, y + size, x + size - r, y + size);
-  ctx.lineTo(x + r, y + size);
-  ctx.quadraticCurveTo(x, y + size, x, y + size - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-  ctx.fill();
-}
-
 export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dataUrl, setDataUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => { generateQR(); }, [url]);
 
@@ -53,95 +22,108 @@ export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayPr
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      // Get the QR module matrix
+      // Step 1 — get QR module matrix
       const qr = (QRCode as any).create(url, { errorCorrectionLevel: 'H' });
-      const size = qr.modules.size as number;
-      const modules = qr.modules.data as Uint8Array;
+      const moduleCount: number = qr.modules.size;
+      const modules: Uint8Array = qr.modules.data;
 
-      const canvasSize = 320;
-      canvas.width = canvasSize;
-      canvas.height = canvasSize;
+      const CANVAS_SIZE = 400;
+      canvas.width = CANVAS_SIZE;
+      canvas.height = CANVAS_SIZE;
       const ctx = canvas.getContext('2d')!;
 
-      // Background
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, canvasSize, canvasSize);
+      // Cream background
+      ctx.fillStyle = '#FFFDF5';
+      ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-      const padding = canvasSize * 0.035;
-      const cellSize = (canvasSize - padding * 2) / size;
+      const margin = CANVAS_SIZE * 0.04;
+      const cell = (CANVAS_SIZE - margin * 2) / moduleCount;
 
-      // Finder pattern zones (7x7 blocks in 3 corners)
-      const isFinderZone = (r: number, c: number) => {
-        return (
-          (r < 9 && c < 9) ||                        // top-left
-          (r < 9 && c >= size - 8) ||                // top-right
-          (r >= size - 8 && c < 9)                   // bottom-left
-        );
-      };
+      // Finder pattern zones (top-left, top-right, bottom-left — 8x8 with quiet zone)
+      const isFinder = (r: number, c: number) =>
+        (r < 9 && c < 9) ||
+        (r < 9 && c >= moduleCount - 8) ||
+        (r >= moduleCount - 8 && c < 9);
 
-      // Draw data modules as hearts, finder zones as rounded squares
-      for (let row = 0; row < size; row++) {
-        for (let col = 0; col < size; col++) {
-          const isDark = !!modules[row * size + col];
-          if (!isDark) continue;
+      // Step 2 — draw each module
+      for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+          if (!modules[row * moduleCount + col]) continue;
 
-          const x = padding + col * cellSize;
-          const y = padding + row * cellSize;
-          const cx = x + cellSize / 2;
-          const cy = y + cellSize / 2;
+          const x = margin + col * cell;
+          const y = margin + row * cell;
+          const cx = x + cell / 2;
+          const cy = y + cell / 2;
 
           ctx.fillStyle = '#CC0000';
 
-          if (isFinderZone(row, col)) {
-            // Draw rounded squares for finder patterns
-            const pad = cellSize * 0.08;
-            drawRoundedSquare(ctx, x + pad, y + pad, cellSize - pad * 2, cellSize * 0.25);
+          if (isFinder(row, col)) {
+            // Rounded squares for finder patterns (keeps QR scannable)
+            const r = cell * 0.22;
+            const pad = cell * 0.06;
+            const sw = cell - pad * 2;
+            const sx = x + pad;
+            const sy = y + pad;
+            ctx.beginPath();
+            ctx.moveTo(sx + r, sy);
+            ctx.arcTo(sx + sw, sy, sx + sw, sy + sw, r);
+            ctx.arcTo(sx + sw, sy + sw, sx, sy + sw, r);
+            ctx.arcTo(sx, sy + sw, sx, sy, r);
+            ctx.arcTo(sx, sy, sx + sw, sy, r);
+            ctx.closePath();
+            ctx.fill();
           } else {
-            // Draw hearts for all data modules
-            drawHeart(ctx, cx, cy, cellSize);
+            // ❤ heart emoji as text — most reliable cross-platform approach
+            const fontSize = Math.round(cell * 1.05);
+            ctx.font = `${fontSize}px serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('❤', cx, cy + cell * 0.04);
           }
         }
       }
 
-      // Center logo — white backing + gold circle + M&V text
-      const cx = canvasSize / 2;
-      const cy = canvasSize / 2;
-      const logoR = canvasSize * 0.11;
+      // Step 3 — center M&V gold logo
+      const cx = CANVAS_SIZE / 2;
+      const cy = CANVAS_SIZE / 2;
+      const logoR = CANVAS_SIZE * 0.1;
 
-      // White backing (clears QR behind logo)
-      ctx.fillStyle = '#FFFFFF';
+      // White backing circle
+      ctx.fillStyle = '#FFFDF5';
       ctx.beginPath();
       ctx.arc(cx, cy, logoR + 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Thin red ring
-      ctx.strokeStyle = 'rgba(180,0,0,0.25)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, logoR + 3, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Gold gradient fill
-      const grad = ctx.createRadialGradient(cx - logoR * 0.25, cy - logoR * 0.25, 0, cx, cy, logoR);
-      grad.addColorStop(0, '#FFD700');
-      grad.addColorStop(0.55, '#C9A84C');
+      // Gold gradient
+      const grad = ctx.createRadialGradient(cx - logoR * 0.3, cy - logoR * 0.3, 1, cx, cy, logoR);
+      grad.addColorStop(0, '#FFE566');
+      grad.addColorStop(0.5, '#C9A84C');
       grad.addColorStop(1, '#8B6914');
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(cx, cy, logoR, 0, Math.PI * 2);
       ctx.fill();
 
-      // MV text
-      const fontSize = Math.round(logoR * 0.7);
-      ctx.fillStyle = '#3d2000';
+      // Dark ring
+      ctx.strokeStyle = 'rgba(100,70,10,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, logoR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // M&V text
+      const fSize = Math.round(logoR * 0.68);
+      ctx.fillStyle = '#2d1500';
+      ctx.font = `bold ${fSize}px Cinzel, Georgia, serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = `bold ${fontSize}px serif`;
       ctx.fillText(initials, cx, cy);
 
       setDataUrl(canvas.toDataURL('image/png'));
       setLoading(false);
     } catch (err) {
+      console.error(err);
+      setError(true);
       setLoading(false);
     }
   }
@@ -156,21 +138,21 @@ export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayPr
 
   return (
     <motion.div
-      className="flex flex-col items-center gap-6"
-      initial={{ opacity: 0, scale: 0.9 }}
+      className="flex flex-col items-center gap-5 w-full"
+      initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
     >
       {/* QR frame */}
       <div
-        className="relative p-4 rounded-2xl"
+        className="relative p-3 rounded-2xl w-full"
         style={{
+          maxWidth: '320px',
           background: 'linear-gradient(145deg, #FFF8E7, #FFF0D0)',
           border: '2px solid rgba(212,175,55,0.5)',
           boxShadow: '0 12px 40px rgba(180,130,40,0.2)',
         }}
       >
-        {/* Corner ornaments */}
         {[
           { top: '8px', left: '8px' },
           { top: '8px', right: '8px' },
@@ -181,7 +163,7 @@ export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayPr
         ))}
 
         {loading && (
-          <div className="w-[240px] h-[240px] flex items-center justify-center">
+          <div className="flex items-center justify-center" style={{ height: '280px' }}>
             <div
               className="w-8 h-8 rounded-full border-2 animate-spin"
               style={{ borderColor: 'rgba(212,175,55,0.3)', borderTopColor: '#FFD700' }}
@@ -189,35 +171,39 @@ export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayPr
           </div>
         )}
 
+        {error && (
+          <div className="flex items-center justify-center text-center p-8" style={{ height: '280px' }}>
+            <p style={{ color: '#8B6914', fontFamily: 'var(--font-playfair)', fontSize: '14px' }}>
+              QR generation failed. Please refresh the page.
+            </p>
+          </div>
+        )}
+
         <canvas
           ref={canvasRef}
           style={{
-            width: '240px',
-            height: '240px',
-            display: loading ? 'none' : 'block',
-            borderRadius: '8px',
+            width: '100%',
+            height: 'auto',
+            display: loading || error ? 'none' : 'block',
+            borderRadius: '10px',
           }}
         />
       </div>
 
       {/* Label */}
       <div className="text-center">
-        <p
-          className="text-xs uppercase tracking-[4px]"
-          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
-        >
+        <p className="text-xs uppercase tracking-[4px]"
+          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}>
           Scan to Open Invitation
         </p>
-        <p
-          className="text-xs mt-1"
-          style={{ color: 'rgba(160,120,60,0.5)', fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
-        >
+        <p className="text-xs mt-1"
+          style={{ color: 'rgba(160,120,60,0.5)', fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}>
           mridulvijaya.vercel.app
         </p>
       </div>
 
-      {/* Download button */}
-      {!loading && dataUrl && (
+      {/* Download */}
+      {!loading && !error && dataUrl && (
         <motion.button
           onClick={downloadQR}
           className="px-6 py-3 rounded-xl flex items-center gap-2"
@@ -233,7 +219,7 @@ export default function QRCodeDisplay({ url, initials = 'M&V' }: QRCodeDisplayPr
           whileTap={{ scale: 0.96 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.3 }}
         >
           ⬇ Download QR Code
         </motion.button>
