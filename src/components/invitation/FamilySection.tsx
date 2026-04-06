@@ -155,7 +155,7 @@ function FamilyCard({
             fontFamily: 'var(--font-playfair)',
           }}
         >
-          S/o {fatherName}
+          {isGroom ? 'S/o' : 'D/o'} {fatherName}
         </p>
 
         {/* Divider */}
