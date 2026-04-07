@@ -13,14 +13,6 @@ export interface Wish {
 
 const WISHES_KEY = 'wedding_wishes_mv';
 
-const SEED_WISHES: Wish[] = [
-  { id: 's1', name: 'Pankaj Jaiman', message: 'Beta bahut bahut badhaai ho! Hamesha khush raho 💐', emoji: '💐', createdAt: '2026-04-08T09:00:00Z' },
-  { id: 's2', name: 'Sanjay Pandey', message: 'Dono ka jeevan mangalmay ho, yahi hamaari dua hai 🙏', emoji: '🙏', createdAt: '2026-04-08T09:05:00Z' },
-  { id: 's3', name: 'Suman Jaiman', message: 'Mridul aur Vijaya ko pyar bhare aashirvaad ❤️', emoji: '❤️', createdAt: '2026-04-08T09:10:00Z' },
-  { id: 's4', name: 'Shushma Pandey', message: 'Yeh milan hamare parivaar ka sabse sundar pal hai 🌸', emoji: '🌸', createdAt: '2026-04-08T09:15:00Z' },
-  { id: 's5', name: 'Ek Shubhchintak', message: 'Congratulations! May your love story be eternal ✨', emoji: '✨', createdAt: '2026-04-08T10:00:00Z' },
-];
-
 const EMOJI_OPTIONS = [
   '❤️','💛','💚','💙','💜','🤍','🧡',
   '💖','💗','💓','💞','💝','💘','💟',
@@ -29,26 +21,35 @@ const EMOJI_OPTIONS = [
   '😊','🥰','😍','🤗','🎁','🎀',
 ];
 
-function loadWishes(): Wish[] {
+async function fetchWishes(): Promise<Wish[]> {
+  try {
+    const res = await fetch('/api/wishes');
+    if (res.ok) return res.json();
+  } catch {}
+  // Fallback to localStorage
   try {
     const raw = localStorage.getItem(WISHES_KEY);
-    const userWishes: Wish[] = raw ? JSON.parse(raw) : [];
-    const userIds = new Set(userWishes.map((w) => w.id));
-    return [
-      ...SEED_WISHES.filter((s) => !userIds.has(s.id)),
-      ...userWishes,
-    ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  } catch {
-    return SEED_WISHES;
-  }
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
 }
 
-function saveWish(wish: Wish) {
+async function postWish(wish: { name: string; message: string; emoji: string }): Promise<Wish | null> {
+  try {
+    const res = await fetch('/api/wishes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(wish),
+    });
+    if (res.ok) return res.json();
+  } catch {}
+  // Fallback: save to localStorage
+  const local: Wish = { id: `l_${Date.now()}`, ...wish, createdAt: new Date().toISOString() };
   try {
     const raw = localStorage.getItem(WISHES_KEY);
-    const existing: Wish[] = raw ? JSON.parse(raw) : [];
-    localStorage.setItem(WISHES_KEY, JSON.stringify([...existing, wish]));
+    const arr: Wish[] = raw ? JSON.parse(raw) : [];
+    localStorage.setItem(WISHES_KEY, JSON.stringify([...arr, local]));
   } catch {}
+  return local;
 }
 
 interface WishesModalProps {
@@ -66,22 +67,18 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
 
   useEffect(() => {
     if (open) {
-      setWishes(loadWishes());
       setTab('list');
+      fetchWishes().then(setWishes);
     }
   }, [open]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim() || !message.trim()) return;
-    const wish: Wish = {
-      id: `u_${Date.now()}`,
-      name: name.trim(),
-      message: message.trim(),
-      emoji: selectedEmoji,
-      createdAt: new Date().toISOString(),
-    };
-    saveWish(wish);
-    setWishes(loadWishes());
+    const saved = await postWish({ name: name.trim(), message: message.trim(), emoji: selectedEmoji });
+    if (saved) {
+      const updated = await fetchWishes();
+      setWishes(updated);
+    }
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);

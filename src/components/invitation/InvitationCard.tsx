@@ -37,12 +37,11 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
   const [wishCount, setWishCount] = useState(0);
 
   useEffect(() => {
-    // Count wishes from localStorage
-    try {
-      const raw = localStorage.getItem('wedding_wishes_mv');
-      const user = raw ? JSON.parse(raw) : [];
-      setWishCount(5 + user.length); // 5 seeded + user wishes
-    } catch { setWishCount(5); }
+    // Fetch count from API
+    fetch('/api/wishes')
+      .then((r) => r.json())
+      .then((data: unknown[]) => setWishCount(data.length))
+      .catch(() => setWishCount(5));
 
     // Auto-show popup after 25s
     const timer = setTimeout(() => setShowWishes(true), 25000);

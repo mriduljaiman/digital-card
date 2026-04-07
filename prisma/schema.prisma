@@ -423,3 +423,14 @@ enum NotificationType {
   NEW_MESSAGE
   SYSTEM_ALERT
 }
+
+// Wedding Wishes
+model Wish {
+  id        String   @id @default(cuid())
+  name      String
+  message   String
+  emoji     String   @default("❤️")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
