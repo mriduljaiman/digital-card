@@ -14,14 +14,12 @@ export default function InstallPrompt() {
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
-    // Already installed as PWA
     if (window.matchMedia('(display-mode: standalone)').matches) return;
 
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      // Show prompt after 4 seconds
-      setTimeout(() => setShow(true), 4000);
+      setTimeout(() => setShow(true), 5000);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -45,74 +43,105 @@ export default function InstallPrompt() {
   return (
     <AnimatePresence>
       {show && !installed && (
-        <motion.div
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-sm"
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        >
-          <div
-            className="rounded-2xl p-4 flex items-center gap-4"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,248,225,0.97), rgba(255,240,195,0.97))',
-              border: '1.5px solid rgba(212,175,55,0.5)',
-              boxShadow: '0 12px 40px rgba(180,130,40,0.25)',
-              backdropFilter: 'blur(12px)',
-            }}
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 z-50"
+            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShow(false)}
+          />
+
+          {/* Modal */}
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            {/* Icon */}
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl"
-              style={{ background: 'linear-gradient(135deg, #C9A84C, #FFD700)' }}
+            <motion.div
+              className="w-full max-w-sm rounded-3xl overflow-hidden"
+              initial={{ scale: 0.85, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.85, y: 30 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+              style={{
+                background: 'linear-gradient(160deg, #FFF9EE 0%, #FFF0D0 100%)',
+                border: '1.5px solid rgba(212,175,55,0.5)',
+                boxShadow: '0 24px 60px rgba(120,80,20,0.35)',
+              }}
             >
-              💌
-            </div>
+              {/* Gold top bar */}
+              <div style={{ height: 5, background: 'linear-gradient(90deg, #C9A84C, #FFD700, #C9A84C)' }} />
 
-            {/* Text */}
-            <div className="flex-1 min-w-0">
-              <p
-                className="font-bold text-sm leading-tight"
-                style={{ color: '#6B5010', fontFamily: 'var(--font-cinzel)', letterSpacing: '0.5px' }}
-              >
-                Save to Home Screen
-              </p>
-              <p
-                className="text-xs mt-0.5 opacity-70"
-                style={{ color: '#6B5010', fontFamily: 'var(--font-playfair)' }}
-              >
-                Open the invitation anytime
-              </p>
-            </div>
+              <div className="px-7 py-8 text-center">
+                {/* Icon */}
+                <div className="text-5xl mb-4">💌</div>
 
-            {/* Buttons */}
-            <div className="flex flex-col gap-1.5 flex-shrink-0">
-              <button
-                onClick={handleInstall}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                style={{
-                  background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
-                  color: '#3d2000',
-                  fontFamily: 'var(--font-cinzel)',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                Install
-              </button>
-              <button
-                onClick={() => setShow(false)}
-                className="px-3 py-1.5 rounded-lg text-xs"
-                style={{
-                  border: '1px solid rgba(180,130,40,0.3)',
-                  color: 'rgba(107,80,16,0.6)',
-                  fontFamily: 'var(--font-cinzel)',
-                }}
-              >
-                Later
-              </button>
-            </div>
-          </div>
-        </motion.div>
+                <p
+                  className="text-xs uppercase tracking-[4px] mb-2"
+                  style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
+                >
+                  Save this Invitation
+                </p>
+
+                <h2
+                  className="text-2xl mb-2"
+                  style={{
+                    fontFamily: 'var(--font-script), cursive',
+                    background: 'linear-gradient(135deg, #8B6914, #C9A84C, #FFD700)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Add to Home Screen
+                </h2>
+
+                <p
+                  className="text-sm mb-7"
+                  style={{
+                    color: 'rgba(100,70,20,0.65)',
+                    fontFamily: 'var(--font-playfair)',
+                    fontStyle: 'italic',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Install the invitation on your phone to open it anytime, even without internet.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleInstall}
+                    className="w-full py-3.5 rounded-xl font-bold text-sm"
+                    style={{
+                      background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
+                      color: '#3d2000',
+                      fontFamily: 'var(--font-cinzel)',
+                      letterSpacing: '1px',
+                      boxShadow: '0 4px 16px rgba(180,130,40,0.35)',
+                    }}
+                  >
+                    Install Now
+                  </button>
+                  <button
+                    onClick={() => setShow(false)}
+                    className="w-full py-2.5 rounded-xl text-sm"
+                    style={{
+                      border: '1px solid rgba(180,130,40,0.3)',
+                      color: 'rgba(107,80,16,0.55)',
+                      fontFamily: 'var(--font-cinzel)',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

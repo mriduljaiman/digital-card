@@ -52,7 +52,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" translate="no">
+      <head>
+        <meta name="google" content="notranslate" />
+      </head>
       <body
         className={`${playfair.variable} ${cinzel.variable} ${greatVibes.variable} antialiased`}
         style={{ fontFamily: 'var(--font-playfair), serif' }}
