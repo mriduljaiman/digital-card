@@ -8,6 +8,9 @@ import FamilySection from './FamilySection';
 import PhotoGallery from './PhotoGallery';
 import MusicPlayer from './MusicPlayer';
 import InstallPrompt from './InstallPrompt';
+import ScrollHint from './ScrollHint';
+import WishesModal from './WishesModal';
+import WishesButton from './WishesButton';
 
 interface InvitationCardProps {
   data: WeddingData;
@@ -30,6 +33,22 @@ function formatMainDate(dateStr: string): string {
 }
 
 export default function InvitationCard({ data, onBack, onLocation }: InvitationCardProps) {
+  const [showWishes, setShowWishes] = useState(false);
+  const [wishCount, setWishCount] = useState(0);
+
+  useEffect(() => {
+    // Count wishes from localStorage
+    try {
+      const raw = localStorage.getItem('wedding_wishes_mv');
+      const user = raw ? JSON.parse(raw) : [];
+      setWishCount(5 + user.length); // 5 seeded + user wishes
+    } catch { setWishCount(5); }
+
+    // Auto-show popup after 25s
+    const timer = setTimeout(() => setShowWishes(true), 25000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <motion.div
       className="min-h-screen relative overflow-x-hidden"
@@ -81,6 +100,7 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
 
       {/* Events */}
       <EventSection events={data.events} />
+      <ScrollHint label="See our family" />
 
       {/* Ornamental divider */}
       <OrnamentDivider />
@@ -97,10 +117,13 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       {/* Photo Gallery */}
       {data.photos.length > 0 && (
         <>
+          <ScrollHint label="See our photos" />
           <OrnamentDivider />
           <PhotoGallery photos={data.photos} />
         </>
       )}
+
+      <ScrollHint label="Wishes & blessings" />
 
       {/* Footer */}
       <InvitationFooter data={data} />
@@ -112,6 +135,12 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
 
       {/* PWA Install Prompt */}
       <InstallPrompt />
+
+      {/* Floating Wishes Button */}
+      <WishesButton onClick={() => setShowWishes(true)} count={wishCount} />
+
+      {/* Wishes Modal */}
+      <WishesModal open={showWishes} onClose={() => setShowWishes(false)} />
 
     </motion.div>
   );
