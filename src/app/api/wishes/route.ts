@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// Seed wishes always returned
+// Hostinger backend — stores all wishes in SQLite
+const BACKEND = 'http://89.116.34.21/api/wishes';
+
 const SEED_WISHES = [
   { id: 's1', name: 'Pankaj Jaiman', message: 'Beta bahut bahut badhaai ho! Hamesha khush raho 💐', emoji: '💐', createdAt: '2026-04-08T09:00:00Z' },
   { id: 's2', name: 'Sanjay Pandey', message: 'Dono ka jeevan mangalmay ho, yahi hamaari dua hai 🙏', emoji: '🙏', createdAt: '2026-04-08T09:05:00Z' },
@@ -11,65 +13,33 @@ const SEED_WISHES = [
   { id: 's5', name: 'Ek Shubhchintak', message: 'Congratulations! May your love story be eternal ✨', emoji: '✨', createdAt: '2026-04-08T10:00:00Z' },
 ];
 
-async function getPrisma() {
-  try {
-    const { prisma } = await import('@/lib/db');
-    return prisma;
-  } catch {
-    return null;
-  }
-}
-
 export async function GET() {
   try {
-    const prisma = await getPrisma();
-    if (!prisma) return NextResponse.json(SEED_WISHES);
-
-    const wishes = await prisma.wish.findMany({ orderBy: { createdAt: 'asc' } });
-    const userWishes = wishes.map((w) => ({
-      id: w.id,
-      name: w.name,
-      message: w.message,
-      emoji: w.emoji,
-      createdAt: w.createdAt.toISOString(),
-    }));
-
-    const userIds = new Set(userWishes.map((w) => w.id));
-    return NextResponse.json([
-      ...SEED_WISHES.filter((s) => !userIds.has(s.id)),
-      ...userWishes,
-    ]);
-  } catch {
-    return NextResponse.json(SEED_WISHES);
-  }
+    const res = await fetch(BACKEND, { next: { revalidate: 0 } });
+    if (res.ok) return NextResponse.json(await res.json());
+  } catch {}
+  return NextResponse.json(SEED_WISHES);
 }
 
 export async function POST(req: NextRequest) {
+  let name = '', message = '', emoji = '❤️';
   try {
     const body = await req.json();
-    const name = String(body.name ?? '').trim().slice(0, 50);
-    const message = String(body.message ?? '').trim().slice(0, 300);
-    const emoji = String(body.emoji ?? '❤️').trim();
+    name = String(body.name ?? '').trim().slice(0, 50);
+    message = String(body.message ?? '').trim().slice(0, 300);
+    emoji = String(body.emoji ?? '❤️').trim();
 
     if (!name || !message) {
       return NextResponse.json({ error: 'Name and message required' }, { status: 400 });
     }
 
-    const prisma = await getPrisma();
-    if (!prisma) {
-      // Fallback: return a fake saved wish (Vercel with no DB)
-      return NextResponse.json({ id: `f_${Date.now()}`, name, message, emoji, createdAt: new Date().toISOString() });
-    }
-
-    const wish = await prisma.wish.create({ data: { name, message, emoji } });
-    return NextResponse.json({
-      id: wish.id,
-      name: wish.name,
-      message: wish.message,
-      emoji: wish.emoji,
-      createdAt: wish.createdAt.toISOString(),
+    const res = await fetch(BACKEND, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, message, emoji }),
     });
-  } catch {
-    return NextResponse.json({ error: 'Failed to save wish' }, { status: 500 });
-  }
+    if (res.ok) return NextResponse.json(await res.json());
+  } catch {}
+
+  return NextResponse.json({ id: `f_${Date.now()}`, name, message, emoji, createdAt: new Date().toISOString() });
 }
