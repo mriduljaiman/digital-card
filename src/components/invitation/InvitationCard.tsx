@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { WeddingData } from '@/types/wedding';
 import EventSection from './EventSection';
 import FamilySection from './FamilySection';
@@ -117,6 +118,14 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
 }
 
 function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () => void }) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => { if (window.scrollY > 60) setScrolled(true); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <motion.div
       className="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center"
@@ -286,13 +295,37 @@ function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () 
       </motion.div>
 
       {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-      >
-        <div style={{ color: 'rgba(212,175,55,0.5)', fontSize: '24px' }}>⌄</div>
-      </motion.div>
+      <AnimatePresence>
+        {!scrolled && (
+          <motion.div
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ delay: 2, duration: 0.6 }}
+          >
+            <motion.p
+              className="text-xs uppercase tracking-[3px] mb-1"
+              style={{ color: 'rgba(160,120,60,0.75)', fontFamily: 'var(--font-cinzel)' }}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Scroll to explore
+            </motion.p>
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{ y: [0, 6, 0], opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2, ease: 'easeInOut' }}
+              >
+                <svg width="22" height="12" viewBox="0 0 22 12" fill="none">
+                  <path d="M1 1L11 10L21 1" stroke="#D4AF37" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
