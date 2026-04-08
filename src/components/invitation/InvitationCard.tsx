@@ -183,7 +183,7 @@ function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () 
         <div className="text-5xl mb-3" style={{ color: 'rgba(212,175,55,0.7)' }}>☸</div>
         <p
           className="text-xs uppercase tracking-[6px]"
-          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
+          style={{ color: 'rgba(90,50,5,0.9)', fontFamily: 'var(--font-cinzel)' }}
         >
           Shubh Vivah
         </p>
@@ -194,7 +194,7 @@ function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () 
         className="max-w-lg text-base mb-8 leading-relaxed"
         style={{
           fontFamily: 'var(--font-playfair)',
-          color: 'rgba(100,70,20,0.75)',
+          color: '#4a2e00',
           fontStyle: 'italic',
         }}
         initial={{ opacity: 0 }}
@@ -297,19 +297,19 @@ function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () 
       >
         <p
           className="text-xs uppercase tracking-[3px] mb-1"
-          style={{ color: 'rgba(160,120,60,0.6)', fontFamily: 'var(--font-cinzel)' }}
+          style={{ color: 'rgba(90,50,5,0.88)', fontFamily: 'var(--font-cinzel)' }}
         >
           Venue
         </p>
         <p
           className="text-xl font-semibold"
-          style={{ fontFamily: 'var(--font-playfair)', color: '#6B5010' }}
+          style={{ fontFamily: 'var(--font-playfair)', color: '#3d2800' }}
         >
           {data.mainVenue}
         </p>
         <p
           className="text-sm mt-1"
-          style={{ fontFamily: 'var(--font-playfair)', color: 'rgba(100,70,20,0.65)' }}
+          style={{ fontFamily: 'var(--font-playfair)', color: '#4a2e00' }}
         >
           📍 {data.mainVenueAddress}
         </p>
@@ -416,7 +416,7 @@ function InvitationFooter({ data }: { data: WeddingData }) {
           className="text-sm mb-6 italic"
           style={{
             fontFamily: 'var(--font-playfair)',
-            color: 'rgba(100,70,20,0.7)',
+            color: '#4a2e00',
           }}
         >
           Your blessings mean the world to us

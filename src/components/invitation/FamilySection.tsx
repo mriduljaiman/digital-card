@@ -32,7 +32,7 @@ export default function FamilySection({
       >
         <p
           className="text-xs uppercase tracking-[5px] mb-3"
-          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
+          style={{ color: 'rgba(90,50,5,0.9)', fontFamily: 'var(--font-cinzel)' }}
         >
           With the Blessings of
         </p>
@@ -129,7 +129,7 @@ function FamilyCard({
         <p
           className="text-xs uppercase tracking-[3px] mb-2"
           style={{
-            color: isGroom ? 'rgba(160,120,60,0.7)' : 'rgba(160,80,100,0.7)',
+            color: isGroom ? 'rgba(90,50,5,0.9)' : 'rgba(160,80,100,0.7)',
             fontFamily: 'var(--font-cinzel)',
           }}
         >
@@ -151,7 +151,7 @@ function FamilyCard({
         <p
           className="text-sm mb-6 italic"
           style={{
-            color: isGroom ? 'rgba(120,90,30,0.7)' : 'rgba(140,60,80,0.7)',
+            color: isGroom ? 'rgba(80,45,5,0.9)' : 'rgba(100,30,55,0.9)',
             fontFamily: 'var(--font-playfair)',
           }}
         >
@@ -179,7 +179,7 @@ function FamilyCard({
                 className="text-sm font-medium"
                 style={{
                   fontFamily: 'var(--font-playfair)',
-                  color: isGroom ? '#6B5010' : '#6B2040',
+                  color: isGroom ? '#3d2800' : '#4a0e28',
                 }}
               >
                 {member.name}
@@ -190,7 +190,7 @@ function FamilyCard({
                   background: isGroom
                     ? 'rgba(212,175,55,0.15)'
                     : 'rgba(200,120,150,0.15)',
-                  color: isGroom ? '#9A7620' : '#9A4060',
+                  color: isGroom ? '#6b4a00' : '#7a1a3a',
                   fontFamily: 'var(--font-cinzel)',
                   fontSize: '10px',
                   letterSpacing: '0.5px',

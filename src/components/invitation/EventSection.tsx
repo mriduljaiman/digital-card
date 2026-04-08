@@ -34,7 +34,7 @@ export default function EventSection({ events }: EventSectionProps) {
       >
         <p
           className="text-xs uppercase tracking-[5px] mb-3"
-          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
+          style={{ color: 'rgba(90,50,5,0.9)', fontFamily: 'var(--font-cinzel)' }}
         >
           Wedding Celebrations
         </p>
@@ -125,24 +125,24 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
         {/* Details */}
         <div className="space-y-2 text-center">
           <div className="flex items-center justify-center gap-2 text-sm"
-            style={{ color: 'rgba(100,70,20,0.8)' }}>
+            style={{ color: '#5a3200' }}>
             <span>📅</span>
             <span style={{ fontFamily: 'var(--font-playfair)' }}>{formatDate(event.date)}</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-sm"
-            style={{ color: 'rgba(100,70,20,0.8)' }}>
+            style={{ color: '#5a3200' }}>
             <span>🕐</span>
             <span style={{ fontFamily: 'var(--font-playfair)' }}>{event.time}</span>
           </div>
           <div className="flex items-start justify-center gap-2 text-sm mt-2"
-            style={{ color: 'rgba(100,70,20,0.7)' }}>
+            style={{ color: '#5a3200' }}>
             <span className="mt-0.5">📍</span>
             <span style={{ fontFamily: 'var(--font-playfair)' }}>{event.venue}</span>
           </div>
           {event.description && (
             <p
               className="text-xs mt-2 italic"
-              style={{ color: 'rgba(100,70,20,0.6)', fontFamily: 'var(--font-playfair)' }}
+              style={{ color: 'rgba(80,45,5,0.85)', fontFamily: 'var(--font-playfair)' }}
             >
               {event.description}
             </p>

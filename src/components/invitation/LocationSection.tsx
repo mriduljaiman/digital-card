@@ -135,7 +135,7 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
       >
         <p
           className="text-xs uppercase tracking-[5px] mb-2"
-          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
+          style={{ color: 'rgba(90,50,5,0.9)', fontFamily: 'var(--font-cinzel)' }}
         >
           Venue Details
         </p>
