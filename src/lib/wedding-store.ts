@@ -21,7 +21,7 @@ export const defaultWeddingData: WeddingData = {
       name: 'Ganesh Nimantran',
       venue: 'Ghar — 148-B Swarnpuri Kanak Vrindavan, Sirsi Road, Jaipur',
       date: '2026-04-08',
-      time: 'Sandhyakal',
+      time: 'Pratah Kal',
       icon: '🙏',
     },
     {
