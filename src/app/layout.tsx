@@ -24,19 +24,19 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: 'Wedding Invitation',
-  description: 'You are cordially invited to celebrate this special union.',
-  manifest: '/manifest.json',
-  themeColor: '#D4AF37',
+  title: 'Mridul & Vijaya — Wedding Invitation',
+  description: 'You are cordially invited to celebrate the wedding of Mridul & Vijaya',
+  // manifest.ts handles the manifest link automatically — do NOT set manifest here
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Wedding Invite',
+    title: 'M & V Wedding',
   },
   openGraph: {
-    title: 'Wedding Invitation',
+    title: 'Mridul & Vijaya Wedding Invitation 💍',
     description: 'You are cordially invited to our wedding celebration.',
     type: 'website',
+    url: 'https://mridulvijaya.vercel.app',
   },
 };
 
