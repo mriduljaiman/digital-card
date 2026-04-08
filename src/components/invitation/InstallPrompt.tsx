@@ -9,57 +9,59 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [show, setShow] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
+    // Already installed as PWA
     if (window.matchMedia('(display-mode: standalone)').matches) return;
 
+    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown as Record<string, unknown>).MSStream;
+    setIsIOS(ios);
+
+    // Android/Chrome: capture install prompt
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setTimeout(() => setShow(true), 5000);
     };
-
     window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', () => {
-      setInstalled(true);
-      setShow(false);
-    });
+    window.addEventListener('appinstalled', () => { setInstalled(true); setShow(false); });
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    // Show after 5s — works for both iOS and Android
+    const timer = setTimeout(() => setShow(true), 5000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    await deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') setInstalled(true);
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') setInstalled(true);
+      setDeferredPrompt(null);
+    }
     setShow(false);
-    setDeferredPrompt(null);
   };
 
   return (
     <AnimatePresence>
       {show && !installed && (
         <>
-          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-50"
             style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setShow(false)}
           />
 
-          {/* Modal */}
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center px-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           >
             <motion.div
               className="w-full max-w-sm rounded-3xl overflow-hidden"
@@ -73,69 +75,88 @@ export default function InstallPrompt() {
                 boxShadow: '0 24px 60px rgba(120,80,20,0.35)',
               }}
             >
-              {/* Gold top bar */}
               <div style={{ height: 5, background: 'linear-gradient(90deg, #C9A84C, #FFD700, #C9A84C)' }} />
 
               <div className="px-7 py-8 text-center">
-                {/* Icon */}
-                <div className="text-5xl mb-4">💌</div>
+                <div className="text-5xl mb-4">{isIOS ? '📲' : '💌'}</div>
 
-                <p
-                  className="text-xs uppercase tracking-[4px] mb-2"
-                  style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
-                >
+                <p className="text-xs uppercase tracking-[4px] mb-2"
+                  style={{ color: 'rgba(90,50,5,0.8)', fontFamily: 'var(--font-cinzel)' }}>
                   Save this Invitation
                 </p>
 
-                <h2
-                  className="text-2xl mb-2"
-                  style={{
-                    fontFamily: 'var(--font-script), cursive',
-                    background: 'linear-gradient(135deg, #8B6914, #C9A84C, #FFD700)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
+                <h2 className="text-2xl mb-3"
+                  style={{ fontFamily: 'var(--font-script), cursive', color: '#8B6914' }}>
                   Add to Home Screen
                 </h2>
 
-                <p
-                  className="text-sm mb-7"
-                  style={{
-                    color: 'rgba(100,70,20,0.65)',
-                    fontFamily: 'var(--font-playfair)',
-                    fontStyle: 'italic',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Install the invitation on your phone to open it anytime, even without internet.
-                </p>
+                {isIOS ? (
+                  /* iOS instructions */
+                  <div className="text-left space-y-3 mb-6 px-2">
+                    <p className="text-sm font-bold text-center mb-4"
+                      style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
+                      iPhone pe install karne ke liye:
+                    </p>
+                    {[
+                      { step: '1', icon: '⬆️', text: 'Safari mein neeche Share button tap karo' },
+                      { step: '2', icon: '➕', text: '"Add to Home Screen" select karo' },
+                      { step: '3', icon: '✅', text: '"Add" tap karo — ho gaya!' },
+                    ].map(({ step, icon, text }) => (
+                      <div key={step} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                          style={{ background: 'linear-gradient(135deg, #C9A84C, #FFD700)', color: '#3d2000' }}>
+                          {step}
+                        </div>
+                        <p className="text-sm" style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
+                          <span className="mr-1">{icon}</span>{text}
+                        </p>
+                      </div>
+                    ))}
+                    {/* Arrow pointing down to Safari bar */}
+                    <div className="text-center mt-2">
+                      <motion.div
+                        animate={{ y: [0, 6, 0] }}
+                        transition={{ duration: 1.2, repeat: Infinity }}
+                        style={{ color: '#C9A84C', fontSize: '28px' }}
+                      >
+                        ↓
+                      </motion.div>
+                      <p className="text-xs" style={{ color: 'rgba(90,50,5,0.55)', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}>
+                        SAFARI SHARE BUTTON
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Android instructions */
+                  <p className="text-sm mb-7"
+                    style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)', fontStyle: 'italic', lineHeight: 1.6 }}>
+                    Install karein aur invitation kabhi bhi offline bhi open karein
+                  </p>
+                )}
 
                 <div className="flex flex-col gap-3">
-                  <button
-                    onClick={handleInstall}
-                    className="w-full py-3.5 rounded-xl font-bold text-sm"
-                    style={{
-                      background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
-                      color: '#3d2000',
-                      fontFamily: 'var(--font-cinzel)',
-                      letterSpacing: '1px',
-                      boxShadow: '0 4px 16px rgba(180,130,40,0.35)',
-                    }}
-                  >
-                    Install Now
-                  </button>
-                  <button
-                    onClick={() => setShow(false)}
+                  {!isIOS && (
+                    <button onClick={handleInstall}
+                      className="w-full py-3.5 rounded-xl font-bold text-sm"
+                      style={{
+                        background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
+                        color: '#3d2000',
+                        fontFamily: 'var(--font-cinzel)',
+                        letterSpacing: '1px',
+                        boxShadow: '0 4px 16px rgba(180,130,40,0.35)',
+                      }}>
+                      Install Now
+                    </button>
+                  )}
+                  <button onClick={() => setShow(false)}
                     className="w-full py-2.5 rounded-xl text-sm"
                     style={{
                       border: '1px solid rgba(180,130,40,0.3)',
-                      color: 'rgba(107,80,16,0.55)',
+                      color: 'rgba(90,50,5,0.6)',
                       fontFamily: 'var(--font-cinzel)',
                       letterSpacing: '0.5px',
-                    }}
-                  >
-                    Maybe Later
+                    }}>
+                    {isIOS ? 'Samajh Gaya' : 'Maybe Later'}
                   </button>
                 </div>
               </div>
