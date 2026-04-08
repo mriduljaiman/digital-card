@@ -123,7 +123,7 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
             <div className="px-6 pt-5 pb-3 flex-shrink-0">
               <div className="flex items-center justify-between mb-1">
                 <div>
-                  <p className="text-xs uppercase tracking-[4px]" style={{ color: 'rgba(160,120,60,0.65)', fontFamily: 'var(--font-cinzel)' }}>
+                  <p className="text-xs uppercase tracking-[4px]" style={{ color: 'rgba(90,50,5,0.9)', fontFamily: 'var(--font-cinzel)' }}>
                     Shubhkaamnaayen
                   </p>
                   <h2 className="text-2xl" style={{ fontFamily: 'var(--font-script), cursive', color: '#8B6914' }}>
@@ -150,7 +150,7 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
                       fontFamily: 'var(--font-cinzel)',
                       letterSpacing: '1px',
                       background: tab === t ? 'linear-gradient(135deg, #C9A84C, #FFD700)' : 'transparent',
-                      color: tab === t ? '#3d2000' : 'rgba(139,105,20,0.6)',
+                      color: tab === t ? '#3d2000' : 'rgba(90,55,5,0.85)',
                     }}
                   >
                     {t === 'list' ? `💌 Wishes (${wishes.length})` : '✍️ Add Mine'}
@@ -188,10 +188,10 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
                           <div className="flex items-start gap-3">
                             <span className="text-2xl flex-shrink-0 mt-0.5">{wish.emoji}</span>
                             <div className="flex-1 min-w-0">
-                              <p className="font-bold text-sm mb-1" style={{ color: '#6B5010', fontFamily: 'var(--font-playfair)' }}>
+                              <p className="font-bold text-sm mb-1" style={{ color: '#3d2800', fontFamily: 'var(--font-playfair)' }}>
                                 {wish.name}
                               </p>
-                              <p className="text-sm leading-relaxed" style={{ color: 'rgba(100,70,20,0.75)', fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}>
+                              <p className="text-sm leading-relaxed" style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}>
                                 "{wish.message}"
                               </p>
                             </div>
@@ -221,7 +221,7 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
                           <p className="text-xl" style={{ fontFamily: 'var(--font-script), cursive', color: '#8B6914' }}>
                             Shukriya!
                           </p>
-                          <p className="text-sm text-center" style={{ color: 'rgba(100,70,20,0.65)', fontFamily: 'var(--font-playfair)' }}>
+                          <p className="text-sm text-center" style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
                             Aapki wishes add ho gayi ✨
                           </p>
                         </motion.div>
@@ -229,7 +229,7 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
                         <div className="space-y-4 pt-2">
                           {/* Name */}
                           <div>
-                            <label className="block text-xs uppercase tracking-[2px] mb-1.5" style={{ color: 'rgba(139,105,20,0.65)', fontFamily: 'var(--font-cinzel)' }}>
+                            <label className="block text-xs uppercase tracking-[2px] mb-1.5" style={{ color: 'rgba(90,55,5,0.9)', fontFamily: 'var(--font-cinzel)' }}>
                               Aapka Naam
                             </label>
                             <input
@@ -249,7 +249,7 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
 
                           {/* Message */}
                           <div>
-                            <label className="block text-xs uppercase tracking-[2px] mb-1.5" style={{ color: 'rgba(139,105,20,0.65)', fontFamily: 'var(--font-cinzel)' }}>
+                            <label className="block text-xs uppercase tracking-[2px] mb-1.5" style={{ color: 'rgba(90,55,5,0.9)', fontFamily: 'var(--font-cinzel)' }}>
                               Aapki Wishes
                             </label>
                             <textarea
@@ -266,12 +266,12 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
                                 fontFamily: 'var(--font-playfair)',
                               }}
                             />
-                            <p className="text-right text-xs mt-1" style={{ color: 'rgba(139,105,20,0.4)' }}>{message.length}/200</p>
+                            <p className="text-right text-xs mt-1" style={{ color: 'rgba(90,55,5,0.55)' }}>{message.length}/200</p>
                           </div>
 
                           {/* Emoji picker */}
                           <div>
-                            <label className="block text-xs uppercase tracking-[2px] mb-2" style={{ color: 'rgba(139,105,20,0.65)', fontFamily: 'var(--font-cinzel)' }}>
+                            <label className="block text-xs uppercase tracking-[2px] mb-2" style={{ color: 'rgba(90,55,5,0.9)', fontFamily: 'var(--font-cinzel)' }}>
                               Emoji Chuno
                             </label>
                             <div className="flex flex-wrap gap-2">
@@ -305,7 +305,7 @@ export default function WishesModal({ open, onClose }: WishesModalProps) {
                               background: name.trim() && message.trim()
                                 ? 'linear-gradient(135deg, #C9A84C, #FFD700)'
                                 : 'rgba(212,175,55,0.25)',
-                              color: name.trim() && message.trim() ? '#3d2000' : 'rgba(139,105,20,0.4)',
+                              color: name.trim() && message.trim() ? '#3d2000' : 'rgba(90,55,5,0.55)',
                               fontFamily: 'var(--font-cinzel)',
                               letterSpacing: '1px',
                               boxShadow: name.trim() && message.trim() ? '0 4px 16px rgba(180,130,40,0.3)' : 'none',

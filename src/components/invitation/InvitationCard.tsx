@@ -42,21 +42,19 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       .then((data: unknown[]) => setWishCount(data.length))
       .catch(() => setWishCount(5));
 
-    // Auto-peek: scroll down after 3.5s to show there's more, then back
-    const peek = setTimeout(() => {
-      if (window.scrollY > 40) return; // user already scrolling
+    // Auto-peek at 3.5s, repeat at 7s if still not scrolled
+    const doPeek = () => {
+      if (window.scrollY > 40) return;
       window.scrollTo({ top: 220, behavior: 'smooth' });
       setTimeout(() => {
-        if (window.scrollY < 260) {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        if (window.scrollY < 260) window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 1200);
-    }, 3500);
-
-    // Auto-show wishes popup after 25s
+    };
+    const t1 = setTimeout(doPeek, 3500);
+    const t2 = setTimeout(doPeek, 7000);
     const wishes = setTimeout(() => setShowWishes(true), 25000);
 
-    return () => { clearTimeout(peek); clearTimeout(wishes); };
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(wishes); };
   }, []);
 
   return (

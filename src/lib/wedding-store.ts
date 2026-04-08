@@ -57,6 +57,14 @@ export const defaultWeddingData: WeddingData = {
       icon: '🍽️',
     },
     {
+      id: '5b',
+      name: 'Janeu & Chak Bhat',
+      venue: 'Ghar — 148-B Swarnpuri Kanak Vrindavan, Sirsi Road, Jaipur',
+      date: '2026-04-19',
+      time: 'Pratah Kal',
+      icon: '🪬',
+    },
+    {
       id: '6',
       name: 'Ghudchadi',
       venue: 'Ghar — 148-B Swarnpuri Kanak Vrindavan, Sirsi Road, Jaipur',

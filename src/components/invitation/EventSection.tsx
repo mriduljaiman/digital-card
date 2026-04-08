@@ -107,7 +107,7 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
           className="text-center text-xl font-bold mb-3"
           style={{
             fontFamily: 'var(--font-playfair)',
-            background: 'linear-gradient(135deg, #8B6914, #C9A84C)',
+            background: 'linear-gradient(135deg, #6b4000, #9a6a10)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
