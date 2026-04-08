@@ -42,19 +42,38 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       .then((data: unknown[]) => setWishCount(data.length))
       .catch(() => setWishCount(5));
 
-    // Auto-peek at 3.5s, repeat at 7s if still not scrolled
+    // Idle-based auto-peek: 5s idle → scroll down 200px for 3s → return
+    let peeking = false;
+    let idleTimer: ReturnType<typeof setTimeout>;
+
     const doPeek = () => {
-      if (window.scrollY > 40) return;
-      window.scrollTo({ top: 220, behavior: 'smooth' });
+      if (peeking) return;
+      peeking = true;
+      const base = window.scrollY;
+      window.scrollTo({ top: base + 200, behavior: 'smooth' });
       setTimeout(() => {
-        if (window.scrollY < 260) window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 1200);
+        window.scrollTo({ top: base, behavior: 'smooth' });
+        setTimeout(() => { peeking = false; }, 800);
+      }, 3000);
     };
-    const t1 = setTimeout(doPeek, 3500);
-    const t2 = setTimeout(doPeek, 7000);
+
+    const resetIdle = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(doPeek, 5000);
+    };
+
+    window.addEventListener('scroll', resetIdle, { passive: true });
+    window.addEventListener('touchstart', resetIdle, { passive: true });
+    idleTimer = setTimeout(doPeek, 5000); // first trigger
+
     const wishes = setTimeout(() => setShowWishes(true), 25000);
 
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(wishes); };
+    return () => {
+      clearTimeout(idleTimer);
+      clearTimeout(wishes);
+      window.removeEventListener('scroll', resetIdle);
+      window.removeEventListener('touchstart', resetIdle);
+    };
   }, []);
 
   return (
@@ -188,19 +207,25 @@ function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () 
       </motion.div>
 
       {/* Invitation message */}
-      <motion.p
-        className="max-w-lg text-base mb-8 leading-relaxed"
-        style={{
-          fontFamily: 'var(--font-playfair)',
-          color: '#4a2e00',
-          fontStyle: 'italic',
-        }}
+      <motion.div
+        className="max-w-lg mb-8 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.8 }}
       >
-        {data.invitationMessage}
-      </motion.p>
+        <p
+          className="text-base font-bold leading-relaxed"
+          style={{ fontFamily: 'var(--font-cinzel)', color: '#3d2000', letterSpacing: '0.5px' }}
+        >
+          You are Cordially Invited
+        </p>
+        <p
+          className="text-sm mt-1 leading-relaxed"
+          style={{ fontFamily: 'var(--font-playfair)', color: '#4a2e00', fontStyle: 'italic' }}
+        >
+          {data.invitationMessage}
+        </p>
+      </motion.div>
 
       {/* Names - The hero element */}
       <motion.div
