@@ -180,56 +180,45 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
               <div className="h-1" style={{ background: s.bar }} />
 
               <div className="p-5">
-                {/* Title row */}
-                <div className="flex items-center gap-3 mb-4">
+                {/* Icon + content */}
+                <div className="flex gap-3">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                    className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 mt-1"
                     style={{ background: s.icon, border: `1.5px solid ${s.iconBorder}` }}
                   >
                     {loc.icon}
                   </div>
-                  <div>
-                    <h3
-                      className="font-bold text-base leading-tight"
-                      style={{ fontFamily: 'var(--font-playfair)', color: s.title }}
-                    >
+
+                  <div className="flex-1 space-y-1.5 mb-4">
+                    {/* 1. Date — bold */}
+                    <p className="font-bold text-sm" style={{ fontFamily: 'var(--font-playfair)', color: s.title }}>
+                      📅 {loc.date}
+                    </p>
+
+                    {/* 2. Main function — bold */}
+                    <p className="font-bold text-base leading-snug" style={{ fontFamily: 'var(--font-playfair)', color: s.title }}>
                       {loc.title}
-                    </h3>
-                    <p
-                      className="text-xs mt-0.5"
-                      style={{ fontFamily: 'var(--font-cinzel)', color: s.sub, letterSpacing: '0.5px' }}
-                    >
-                      {loc.subtitle}
+                    </p>
+                    {loc.subtitle && (
+                      <p className="font-bold text-xs" style={{ fontFamily: 'var(--font-cinzel)', color: s.sub, letterSpacing: '0.4px' }}>
+                        {loc.subtitle}
+                      </p>
+                    )}
+
+                    {/* 3. Address — bold */}
+                    <p className="font-bold text-sm pt-0.5" style={{ fontFamily: 'var(--font-playfair)', color: s.title }}>
+                      {loc.venue}
+                    </p>
+                    <p className="font-bold text-xs" style={{ fontFamily: 'var(--font-playfair)', color: s.sub }}>
+                      📍 {loc.address}
                     </p>
                   </div>
                 </div>
 
-                {/* Venue info */}
-                <div className="space-y-1.5 mb-5">
-                  <div className="flex items-start gap-2">
-                    <span className="text-sm mt-0.5">🏛️</span>
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ fontFamily: 'var(--font-playfair)', color: s.title }}
-                    >
-                      {loc.venue}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-sm mt-0.5">📍</span>
-                    <span
-                      className="text-sm"
-                      style={{ fontFamily: 'var(--font-playfair)', color: s.sub }}
-                    >
-                      {loc.address}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Maps button */}
+                {/* 4. Google Maps button */}
                 <button
                   onClick={() => openMaps(loc)}
-                  className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-opacity active:opacity-80"
+                  className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 active:opacity-80"
                   style={{
                     background: s.btn,
                     color: s.btnText,
@@ -239,7 +228,7 @@ export default function LocationSection({ mainVenue, homeAddress, onBack }: Loca
                   }}
                 >
                   <span>🗺️</span>
-                  Open in Google Maps
+                  Get Directions
                 </button>
               </div>
             </motion.div>
