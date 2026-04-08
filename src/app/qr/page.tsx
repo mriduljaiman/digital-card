@@ -3,6 +3,8 @@
 import QRCodeDisplay from '@/components/invitation/QRCodeDisplay';
 import { motion } from 'framer-motion';
 
+const INVITE_URL = 'https://mridulvijaya.vercel.app/';
+
 export default function QRPage() {
   return (
     <div
@@ -11,14 +13,14 @@ export default function QRPage() {
     >
       {/* Header */}
       <motion.div
-        className="text-center mb-8 w-full"
+        className="text-center mb-6 w-full"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
         <p
           className="text-xs uppercase tracking-[5px] mb-3"
-          style={{ color: 'rgba(160,120,60,0.7)', fontFamily: 'var(--font-cinzel)' }}
+          style={{ color: 'rgba(90,50,5,0.85)', fontFamily: 'var(--font-cinzel)' }}
         >
           Wedding Invitation
         </p>
@@ -42,42 +44,80 @@ export default function QRPage() {
         </div>
       </motion.div>
 
-      {/* QR Code — max width so it fits any screen */}
-      <div className="w-full" style={{ maxWidth: '340px' }}>
-        <QRCodeDisplay
-          url="https://mridulvijaya.vercel.app/"
-          initials="M&V"
-        />
-      </div>
-
-      {/* Footer note */}
-      <motion.p
-        className="mt-6 text-xs text-center"
+      {/* BIG TAP BUTTON — most prominent */}
+      <motion.a
+        href={INVITE_URL}
+        className="w-full flex items-center justify-center gap-3 rounded-2xl mb-6"
         style={{
-          color: 'rgba(160,120,60,0.5)',
+          maxWidth: '340px',
+          padding: '18px 24px',
+          background: 'linear-gradient(135deg, #C9A84C, #FFD700, #C9A84C)',
+          boxShadow: '0 8px 32px rgba(180,130,40,0.45)',
+          textDecoration: 'none',
+        }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.3, duration: 0.6, type: 'spring', stiffness: 200 }}
+        whileTap={{ scale: 0.96 }}
+      >
+        <span style={{ fontSize: '28px' }}>💌</span>
+        <div className="text-left">
+          <p
+            className="font-bold text-base leading-tight"
+            style={{ color: '#3d1800', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}
+          >
+            Open Invitation
+          </p>
+          <p
+            className="text-xs mt-0.5"
+            style={{ color: 'rgba(61,24,0,0.65)', fontFamily: 'var(--font-playfair)' }}
+          >
+            Tap here to view full invitation
+          </p>
+        </div>
+        <span style={{ color: '#3d1800', fontSize: '22px', marginLeft: 'auto' }}>›</span>
+      </motion.a>
+
+      {/* OR divider */}
+      <motion.div
+        className="flex items-center gap-3 w-full mb-5"
+        style={{ maxWidth: '340px' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.35)' }} />
+        <span style={{ color: 'rgba(90,50,5,0.5)', fontFamily: 'var(--font-cinzel)', fontSize: '11px', letterSpacing: '2px' }}>
+          OR SCAN
+        </span>
+        <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.35)' }} />
+      </motion.div>
+
+      {/* QR Code */}
+      <motion.div
+        className="w-full"
+        style={{ maxWidth: '300px' }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.6 }}
+      >
+        <QRCodeDisplay url={INVITE_URL} initials="M&V" />
+      </motion.div>
+
+      <motion.p
+        className="mt-4 text-xs text-center"
+        style={{
+          color: 'rgba(90,50,5,0.55)',
           fontFamily: 'var(--font-playfair)',
           fontStyle: 'italic',
-          lineHeight: 1.7,
-          maxWidth: '260px',
+          maxWidth: '240px',
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 0.9 }}
       >
-        Scan this QR code to open the digital wedding invitation
+        Camera se QR scan karein ya upar wala button tap karein
       </motion.p>
-
-      {/* Back to invitation link */}
-      <motion.a
-        href="/"
-        className="mt-5 text-xs uppercase tracking-[3px]"
-        style={{ color: 'rgba(160,120,60,0.5)', fontFamily: 'var(--font-cinzel)' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        ← Back to Invitation
-      </motion.a>
     </div>
   );
 }
