@@ -37,15 +37,26 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
   const [wishCount, setWishCount] = useState(0);
 
   useEffect(() => {
-    // Fetch count from API
     fetch('/api/wishes')
       .then((r) => r.json())
       .then((data: unknown[]) => setWishCount(data.length))
       .catch(() => setWishCount(5));
 
-    // Auto-show popup after 25s
-    const timer = setTimeout(() => setShowWishes(true), 25000);
-    return () => clearTimeout(timer);
+    // Auto-peek: scroll down after 3.5s to show there's more, then back
+    const peek = setTimeout(() => {
+      if (window.scrollY > 40) return; // user already scrolling
+      window.scrollTo({ top: 220, behavior: 'smooth' });
+      setTimeout(() => {
+        if (window.scrollY < 260) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 1200);
+    }, 3500);
+
+    // Auto-show wishes popup after 25s
+    const wishes = setTimeout(() => setShowWishes(true), 25000);
+
+    return () => { clearTimeout(peek); clearTimeout(wishes); };
   }, []);
 
   return (
@@ -156,7 +167,8 @@ function HeroSection({ data, onLocation }: { data: WeddingData; onLocation?: () 
 
   return (
     <motion.div
-      className="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center"
+      className="relative flex flex-col items-center justify-center px-6 text-center"
+      style={{ minHeight: '92vh', paddingTop: '5rem', paddingBottom: '4rem' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
