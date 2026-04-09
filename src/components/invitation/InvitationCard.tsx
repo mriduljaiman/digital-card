@@ -84,83 +84,79 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
   }, []);
 
   return (
-    <motion.div
-      className="min-h-screen relative overflow-x-hidden"
-      style={{
-        background: 'linear-gradient(180deg, #FFF9EE 0%, #FFF5E0 30%, #FFF0D6 60%, #FFF9EE 100%)',
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.2 }}
-    >
-      {/* Decorative background pattern */}
-      <div
-        className="fixed inset-0 pointer-events-none opacity-[0.035]"
+    <>
+      {/* Page content */}
+      <motion.div
+        className="min-h-screen relative overflow-x-hidden"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4AF37' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Cpath d='M30 10 L35 25 L30 20 L25 25 Z'/%3E%3Cpath d='M30 50 L35 35 L30 40 L25 35 Z'/%3E%3Cpath d='M10 30 L25 35 L20 30 L25 25 Z'/%3E%3Cpath d='M50 30 L35 35 L40 30 L35 25 Z'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '60px 60px',
+          background: 'linear-gradient(180deg, #FFF9EE 0%, #FFF5E0 30%, #FFF0D6 60%, #FFF9EE 100%)',
         }}
-      />
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
+      >
+        {/* Decorative background pattern */}
+        <div
+          className="fixed inset-0 pointer-events-none opacity-[0.035]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4AF37' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Cpath d='M30 10 L35 25 L30 20 L25 25 Z'/%3E%3Cpath d='M30 50 L35 35 L30 40 L25 35 Z'/%3E%3Cpath d='M10 30 L25 35 L20 30 L25 25 Z'/%3E%3Cpath d='M50 30 L35 35 L40 30 L35 25 Z'/%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: '60px 60px',
+          }}
+        />
 
-      {/* Back button */}
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="fixed top-4 left-4 z-50 flex items-center gap-2"
-          style={{ minHeight: '44px' }}
-        >
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{
-              background: 'rgba(255,248,225,0.85)',
-              border: '1px solid rgba(212,175,55,0.4)',
-              backdropFilter: 'blur(8px)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            }}
+        {/* Back button */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="fixed top-4 left-4 z-50 flex items-center gap-2"
+            style={{ minHeight: '44px' }}
           >
-            <span style={{ color: '#8B6914', fontSize: '18px', fontWeight: 'bold' }}>‹</span>
-          </div>
-          <span className="text-sm font-bold" style={{ color: '#8B6914', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}>
-            Back
-          </span>
-        </button>
-      )}
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center"
+              style={{
+                background: 'rgba(255,248,225,0.85)',
+                border: '1px solid rgba(212,175,55,0.4)',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              }}
+            >
+              <span style={{ color: '#8B6914', fontSize: '18px', fontWeight: 'bold' }}>‹</span>
+            </div>
+            <span className="text-sm font-bold" style={{ color: '#8B6914', fontFamily: 'var(--font-cinzel)', letterSpacing: '1px' }}>
+              Back
+            </span>
+          </button>
+        )}
 
-      {/* Hero Section */}
-      <HeroSection data={data} onLocation={onLocation} />
+        {/* Hero Section */}
+        <HeroSection data={data} onLocation={onLocation} />
 
-      {/* Ornamental divider */}
-      <OrnamentDivider />
+        <OrnamentDivider />
+        <EventSection events={data.events} />
+        <ScrollHint label="See our family" />
+        <OrnamentDivider />
 
-      {/* Events */}
-      <EventSection events={data.events} />
-      <ScrollHint label="See our family" />
+        <FamilySection
+          familyMembers={data.familyMembers}
+          groomName={data.groomName}
+          brideName={data.brideName}
+          groomFatherName={data.groomFatherName}
+          brideFatherName={data.brideFatherName}
+        />
 
-      {/* Ornamental divider */}
-      <OrnamentDivider />
+        {data.photos.length > 0 && (
+          <>
+            <ScrollHint label="See our photos" />
+            <OrnamentDivider />
+            <PhotoGallery photos={data.photos} />
+          </>
+        )}
 
-      {/* Family Section */}
-      <FamilySection
-        familyMembers={data.familyMembers}
-        groomName={data.groomName}
-        brideName={data.brideName}
-        groomFatherName={data.groomFatherName}
-        brideFatherName={data.brideFatherName}
-      />
+        <ScrollHint label="Wishes & blessings" />
+        <InvitationFooter data={data} />
+      </motion.div>
 
-      {/* Photo Gallery */}
-      {data.photos.length > 0 && (
-        <>
-          <ScrollHint label="See our photos" />
-          <OrnamentDivider />
-          <PhotoGallery photos={data.photos} />
-        </>
-      )}
-
-      <ScrollHint label="Wishes & blessings" />
-
-      {/* Footer */}
-      <InvitationFooter data={data} />
+      {/* Fixed UI — outside motion.div so transforms don't break position:fixed */}
 
       {/* Wishes button — right side, vertically centered */}
       <WishesButton onClick={handleWishesOpen} count={wishCount} />
@@ -172,7 +168,6 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
         style={{
           background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
           boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
-          willChange: 'transform',
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -195,8 +190,7 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
 
       {/* Wishes Modal */}
       <WishesModal open={showWishes} onClose={() => setShowWishes(false)} />
-
-    </motion.div>
+    </>
   );
 }
 
