@@ -7,7 +7,6 @@ import { WeddingData } from '@/types/wedding';
 import EventSection from './EventSection';
 import FamilySection from './FamilySection';
 import PhotoGallery from './PhotoGallery';
-import MusicPlayer from './MusicPlayer';
 import ScrollHint from './ScrollHint';
 import WishesModal from './WishesModal';
 import WishesButton from './WishesButton';
@@ -187,12 +186,7 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
         document.body
       )}
 
-      {/* Music Player — bottom left */}
-      {data.musicEnabled && (
-        <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
-      )}
-
-      {/* Wishes Modal */}
+{/* Wishes Modal */}
       <WishesModal open={showWishes} onClose={() => setShowWishes(false)} />
     </>
   );

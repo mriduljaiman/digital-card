@@ -6,6 +6,7 @@ import EnvelopeScreen from '@/components/invitation/EnvelopeScreen';
 import SelectionScreen from '@/components/invitation/SelectionScreen';
 import InvitationCard from '@/components/invitation/InvitationCard';
 import LocationSection from '@/components/invitation/LocationSection';
+import MusicPlayer from '@/components/invitation/MusicPlayer';
 import { getWeddingData } from '@/lib/wedding-store';
 import { WeddingData } from '@/types/wedding';
 
@@ -110,6 +111,11 @@ export default function HomePage() {
         )}
 
       </AnimatePresence>
+
+      {/* Music player — outside AnimatePresence so no transform ever touches it */}
+      {view === 'invitation' && data?.musicEnabled && (
+        <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
+      )}
     </main>
   );
 }
