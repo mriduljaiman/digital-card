@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { WeddingData } from '@/types/wedding';
 import EventSection from './EventSection';
 import FamilySection from './FamilySection';
@@ -34,6 +34,12 @@ function formatMainDate(dateStr: string): string {
 export default function InvitationCard({ data, onBack, onLocation }: InvitationCardProps) {
   const [showWishes, setShowWishes] = useState(false);
   const [wishCount, setWishCount] = useState(0);
+  const manuallyOpenedWishes = useRef(false);
+
+  const handleWishesOpen = () => {
+    manuallyOpenedWishes.current = true;
+    setShowWishes(true);
+  };
 
   useEffect(() => {
     fetch('/api/wishes')
@@ -63,8 +69,14 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       window.addEventListener('touchend', onTouchEnd, { passive: true });
     }, 3000);
 
+    // Auto-open wishes after 35s — only if user hasn't manually opened it
+    const autoWish = setTimeout(() => {
+      if (!manuallyOpenedWishes.current) setShowWishes(true);
+    }, 35000);
+
     return () => {
       clearTimeout(startTimer);
+      clearTimeout(autoWish);
       cancelAnimationFrame(raf);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend', onTouchEnd);
@@ -150,35 +162,46 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       {/* Footer */}
       <InvitationFooter data={data} />
 
-      {/* Music Player */}
-      {data.musicEnabled && (
-        <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
-      )}
-
-      {/* Call button — above music button */}
-      <motion.a
-        href="tel:9529787596"
-        className="fixed bottom-24 right-6 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
-        style={{
-          background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
-          boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
-        }}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1.3, type: 'spring' }}
-        title="Call us"
+      {/* Right-side floating button stack: Wishes → Call → Music */}
+      <div
+        className="fixed right-5 z-40 flex flex-col items-center gap-3"
+        style={{ bottom: '24px', willChange: 'transform', transform: 'translateZ(0)' }}
       >
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{ background: 'rgba(76,175,80,0.35)' }}
-          animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity }}
-        />
-        <span className="text-2xl relative z-10">📞</span>
-      </motion.a>
+        {/* Wishes button */}
+        <WishesButton onClick={handleWishesOpen} count={wishCount} />
 
-      {/* Floating Wishes Button */}
-      <WishesButton onClick={() => setShowWishes(true)} count={wishCount} />
+        {/* Call button */}
+        <motion.a
+          href="tel:9529787596"
+          className="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
+          style={{
+            background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
+            boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
+            willChange: 'transform',
+          }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ y: [0, -8, 0], scale: 1, opacity: 1 }}
+          transition={{
+            scale: { delay: 1.3, type: 'spring' },
+            opacity: { delay: 1.3, duration: 0.4 },
+            y: { duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 },
+          }}
+          title="Call us"
+        >
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{ background: 'rgba(76,175,80,0.3)' }}
+            animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+          />
+          <span className="text-2xl relative z-10">📞</span>
+        </motion.a>
+
+        {/* Music Player (inline so it stays in the stack) */}
+        {data.musicEnabled && (
+          <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
+        )}
+      </div>
 
       {/* Wishes Modal */}
       <WishesModal open={showWishes} onClose={() => setShowWishes(false)} />

@@ -11,19 +11,24 @@ export default function WishesButton({ onClick, count }: WishesButtonProps) {
   return (
     <motion.button
       onClick={onClick}
-      className="fixed z-40 flex flex-col items-center justify-center"
+      className="flex flex-col items-center justify-center relative"
       style={{
-        right: '1rem',
-        bottom: '40%',
-        width: 58,
-        height: 58,
+        width: 56,
+        height: 56,
         borderRadius: '50%',
         background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
         boxShadow: '0 6px 24px rgba(180,130,40,0.45), 0 2px 8px rgba(0,0,0,0.15)',
         border: '2px solid rgba(255,255,255,0.5)',
+        willChange: 'transform',
+        flexShrink: 0,
       }}
-      animate={{ y: [0, -8, 0] }}
-      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ y: [0, -8, 0], scale: 1, opacity: 1 }}
+      transition={{
+        scale: { delay: 1.1, type: 'spring' },
+        opacity: { delay: 1.1, duration: 0.4 },
+        y: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+      }}
       whileTap={{ scale: 0.92 }}
     >
       <span style={{ fontSize: 22, lineHeight: 1 }}>💌</span>

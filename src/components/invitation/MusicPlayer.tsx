@@ -61,31 +61,29 @@ export default function MusicPlayer({ enabled, musicUrl }: MusicPlayerProps) {
   if (!visible) return null;
 
   return (
-    <motion.div
-      className="fixed bottom-6 right-6 z-40"
+    <motion.button
+      onClick={togglePlay}
+      className="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
+      style={{
+        background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
+        boxShadow: '0 8px 24px rgba(201,168,76,0.5)',
+        willChange: 'transform',
+        flexShrink: 0,
+      }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 1.5, type: 'spring' }}
+      title={playing ? 'Pause music' : 'Play music'}
     >
-      <button
-        onClick={togglePlay}
-        className="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
-        style={{
-          background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
-          boxShadow: '0 8px 24px rgba(201,168,76,0.5)',
-        }}
-        title={playing ? 'Pause music' : 'Play music'}
-      >
-        {playing && (
-          <motion.div
-            className="absolute inset-0 rounded-full"
-            style={{ background: 'rgba(212,175,55,0.35)' }}
-            animate={{ scale: [1, 1.6], opacity: [0.6, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-        )}
-        <span className="text-2xl relative z-10">{playing ? '⏸' : '🎵'}</span>
-      </button>
-    </motion.div>
+      {playing && (
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ background: 'rgba(212,175,55,0.35)' }}
+          animate={{ scale: [1, 1.6], opacity: [0.6, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+      )}
+      <span className="text-2xl relative z-10">{playing ? '⏸' : '🎵'}</span>
+    </motion.button>
   );
 }
