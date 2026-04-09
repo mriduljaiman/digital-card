@@ -65,57 +65,59 @@ export default function HomePage() {
   }
 
   return (
-    <main>
-      <AnimatePresence mode="wait">
+    <>
+      <main>
+        <AnimatePresence mode="wait">
 
-        {view === 'envelope' && (
-          <motion.div key="envelope" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <EnvelopeScreen
-              initials={data.initials}
-              groomName={data.groomName}
-              brideName={data.brideName}
-              onOpen={() => setTimeout(() => navigate('selection'), 700)}
-            />
-          </motion.div>
-        )}
+          {view === 'envelope' && (
+            <motion.div key="envelope" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+              <EnvelopeScreen
+                initials={data.initials}
+                groomName={data.groomName}
+                brideName={data.brideName}
+                onOpen={() => setTimeout(() => navigate('selection'), 700)}
+              />
+            </motion.div>
+          )}
 
-        {view === 'selection' && (
-          <motion.div key="selection" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <SelectionScreen
-              groomName={data.groomName}
-              brideName={data.brideName}
-              onSelectInvitation={() => navigate('invitation')}
-              onSelectLocation={() => navigate('location')}
-            />
-          </motion.div>
-        )}
+          {view === 'selection' && (
+            <motion.div key="selection" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+              <SelectionScreen
+                groomName={data.groomName}
+                brideName={data.brideName}
+                onSelectInvitation={() => navigate('invitation')}
+                onSelectLocation={() => navigate('location')}
+              />
+            </motion.div>
+          )}
 
-        {view === 'invitation' && (
-          <motion.div key="invitation" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <InvitationCard
-              data={data}
-              onBack={() => window.history.back()}
-              onLocation={() => navigate('location')}
-            />
-          </motion.div>
-        )}
+          {view === 'invitation' && (
+            <motion.div key="invitation" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+              <InvitationCard
+                data={data}
+                onBack={() => window.history.back()}
+                onLocation={() => navigate('location')}
+              />
+            </motion.div>
+          )}
 
-        {view === 'location' && (
-          <motion.div key="location" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <LocationSection
-              mainVenue={data.mainVenue}
-              homeAddress={data.homeAddress}
-              onBack={() => window.history.back()}
-            />
-          </motion.div>
-        )}
+          {view === 'location' && (
+            <motion.div key="location" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+              <LocationSection
+                mainVenue={data.mainVenue}
+                homeAddress={data.homeAddress}
+                onBack={() => window.history.back()}
+              />
+            </motion.div>
+          )}
 
-      </AnimatePresence>
+        </AnimatePresence>
+      </main>
 
-      {/* Music player — outside AnimatePresence so no transform ever touches it */}
+      {/* Music player — outside <main> (which has overflow-x:hidden) so fixed works */}
       {view === 'invitation' && data?.musicEnabled && (
         <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
       )}
-    </main>
+    </>
   );
 }
