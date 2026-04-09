@@ -63,12 +63,11 @@ export default function MusicPlayer({ enabled, musicUrl }: MusicPlayerProps) {
   return (
     <motion.button
       onClick={togglePlay}
-      className="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
+      className="fixed bottom-6 left-5 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
       style={{
         background: 'linear-gradient(135deg, #C9A84C, #FFD700)',
         boxShadow: '0 8px 24px rgba(201,168,76,0.5)',
         willChange: 'transform',
-        flexShrink: 0,
       }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}

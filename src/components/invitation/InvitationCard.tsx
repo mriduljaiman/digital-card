@@ -162,46 +162,36 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       {/* Footer */}
       <InvitationFooter data={data} />
 
-      {/* Right-side floating button stack: Wishes → Call → Music */}
-      <div
-        className="fixed right-5 z-40 flex flex-col items-center gap-3"
-        style={{ bottom: '24px', willChange: 'transform', transform: 'translateZ(0)' }}
+      {/* Wishes button — right side, vertically centered */}
+      <WishesButton onClick={handleWishesOpen} count={wishCount} />
+
+      {/* Call button — bottom right */}
+      <motion.a
+        href="tel:9529787596"
+        className="fixed bottom-6 right-5 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl"
+        style={{
+          background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
+          boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
+          willChange: 'transform',
+        }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.3, type: 'spring' }}
+        title="Call us"
       >
-        {/* Wishes button */}
-        <WishesButton onClick={handleWishesOpen} count={wishCount} />
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ background: 'rgba(76,175,80,0.3)' }}
+          animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        />
+        <span className="text-2xl relative z-10">📞</span>
+      </motion.a>
 
-        {/* Call button */}
-        <motion.a
-          href="tel:9529787596"
-          className="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
-          style={{
-            background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
-            boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
-            willChange: 'transform',
-          }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ y: [0, -8, 0], scale: 1, opacity: 1 }}
-          transition={{
-            scale: { delay: 1.3, type: 'spring' },
-            opacity: { delay: 1.3, duration: 0.4 },
-            y: { duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 },
-          }}
-          title="Call us"
-        >
-          <motion.div
-            className="absolute inset-0 rounded-full"
-            style={{ background: 'rgba(76,175,80,0.3)' }}
-            animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity }}
-          />
-          <span className="text-2xl relative z-10">📞</span>
-        </motion.a>
-
-        {/* Music Player (inline so it stays in the stack) */}
-        {data.musicEnabled && (
-          <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
-        )}
-      </div>
+      {/* Music Player — bottom left */}
+      {data.musicEnabled && (
+        <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
+      )}
 
       {/* Wishes Modal */}
       <WishesModal open={showWishes} onClose={() => setShowWishes(false)} />
