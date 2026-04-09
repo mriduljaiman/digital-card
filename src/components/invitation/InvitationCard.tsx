@@ -7,7 +7,6 @@ import EventSection from './EventSection';
 import FamilySection from './FamilySection';
 import PhotoGallery from './PhotoGallery';
 import MusicPlayer from './MusicPlayer';
-import InstallPrompt from './InstallPrompt';
 import ScrollHint from './ScrollHint';
 import WishesModal from './WishesModal';
 import WishesButton from './WishesButton';
@@ -42,37 +41,33 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       .then((data: unknown[]) => setWishCount(data.length))
       .catch(() => setWishCount(5));
 
-    // Idle-based auto-peek: 5s idle → scroll down 200px for 3s → return
-    let peeking = false;
-    let idleTimer: ReturnType<typeof setTimeout>;
+    // Slow auto-scroll: starts after 3s, pauses on touch, resumes 1.5s after release
+    let raf: number;
+    let paused = false;
 
-    const doPeek = () => {
-      if (peeking) return;
-      peeking = true;
-      const base = window.scrollY;
-      window.scrollTo({ top: base + 200, behavior: 'smooth' });
-      setTimeout(() => {
-        window.scrollTo({ top: base, behavior: 'smooth' });
-        setTimeout(() => { peeking = false; }, 800);
-      }, 3000);
+    const tick = () => {
+      if (!paused) {
+        const atBottom =
+          window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+        if (!atBottom) window.scrollBy(0, 0.4); // ~24px/sec at 60fps
+      }
+      raf = requestAnimationFrame(tick);
     };
 
-    const resetIdle = () => {
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(doPeek, 5000);
-    };
+    const onTouchStart = () => { paused = true; };
+    const onTouchEnd = () => { setTimeout(() => { paused = false; }, 1500); };
 
-    window.addEventListener('scroll', resetIdle, { passive: true });
-    window.addEventListener('touchstart', resetIdle, { passive: true });
-    idleTimer = setTimeout(doPeek, 5000); // first trigger
-
-    const wishes = setTimeout(() => setShowWishes(true), 25000);
+    const startTimer = setTimeout(() => {
+      raf = requestAnimationFrame(tick);
+      window.addEventListener('touchstart', onTouchStart, { passive: true });
+      window.addEventListener('touchend', onTouchEnd, { passive: true });
+    }, 3000);
 
     return () => {
-      clearTimeout(idleTimer);
-      clearTimeout(wishes);
-      window.removeEventListener('scroll', resetIdle);
-      window.removeEventListener('touchstart', resetIdle);
+      clearTimeout(startTimer);
+      cancelAnimationFrame(raf);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
     };
   }, []);
 
@@ -160,8 +155,27 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
         <MusicPlayer enabled={data.musicEnabled} musicUrl={data.musicUrl} />
       )}
 
-      {/* PWA Install Prompt */}
-      <InstallPrompt />
+      {/* Call button — above music button */}
+      <motion.a
+        href="tel:9529787596"
+        className="fixed bottom-24 right-6 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
+        style={{
+          background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
+          boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
+        }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.3, type: 'spring' }}
+        title="Call us"
+      >
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ background: 'rgba(76,175,80,0.35)' }}
+          animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        />
+        <span className="text-2xl relative z-10">📞</span>
+      </motion.a>
 
       {/* Floating Wishes Button */}
       <WishesButton onClick={() => setShowWishes(true)} count={wishCount} />
