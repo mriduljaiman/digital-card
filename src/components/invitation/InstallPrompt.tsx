@@ -45,13 +45,8 @@ export default function InstallPrompt() {
       if (outcome === 'accepted') setInstalled(true);
       setDeferredPrompt(null);
       setShow(false);
-    } else {
-      // Fallback: show Android manual instructions
-      setShowAndroidManual(true);
     }
   };
-
-  const [showAndroidManual, setShowAndroidManual] = useState(false);
 
   return (
     <AnimatePresence>
@@ -95,30 +90,7 @@ export default function InstallPrompt() {
                   Add to Home Screen
                 </h2>
 
-                {showAndroidManual ? (
-                  /* Android manual fallback */
-                  <div className="text-left space-y-3 mb-6 px-2">
-                    <p className="text-sm font-bold text-center mb-4"
-                      style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
-                      Chrome mein install karne ke liye:
-                    </p>
-                    {[
-                      { step: '1', icon: '⋮', text: 'Chrome mein upar 3 dots (menu) tap karo' },
-                      { step: '2', icon: '📲', text: '"Add to Home screen" select karo' },
-                      { step: '3', icon: '✅', text: '"Add" tap karo — ho gaya!' },
-                    ].map(({ step, icon, text }) => (
-                      <div key={step} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
-                          style={{ background: 'linear-gradient(135deg, #C9A84C, #FFD700)', color: '#3d2000' }}>
-                          {step}
-                        </div>
-                        <p className="text-sm" style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
-                          <span className="mr-1 font-bold">{icon}</span>{text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : isIOS ? (
+                {isIOS ? (
                   /* iOS instructions */
                   <div className="text-left space-y-3 mb-6 px-2">
                     <p className="text-sm font-bold text-center mb-4"
@@ -155,15 +127,32 @@ export default function InstallPrompt() {
                     </div>
                   </div>
                 ) : (
-                  /* Android — before prompt fires */
-                  <p className="text-sm mb-7"
-                    style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)', fontStyle: 'italic', lineHeight: 1.6 }}>
-                    Install karein aur invitation kabhi bhi offline bhi open karein
-                  </p>
+                  /* Android — always show manual Chrome instructions */
+                  <div className="text-left space-y-3 mb-6 px-2">
+                    <p className="text-sm font-bold text-center mb-4"
+                      style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
+                      Chrome mein install karne ke liye:
+                    </p>
+                    {[
+                      { step: '1', icon: '⋮', text: 'Chrome mein upar 3 dots (menu) tap karo' },
+                      { step: '2', icon: '📲', text: '"Add to Home screen" select karo' },
+                      { step: '3', icon: '✅', text: '"Add" tap karo — ho gaya!' },
+                    ].map(({ step, icon, text }) => (
+                      <div key={step} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                          style={{ background: 'linear-gradient(135deg, #C9A84C, #FFD700)', color: '#3d2000' }}>
+                          {step}
+                        </div>
+                        <p className="text-sm" style={{ color: '#4a2e00', fontFamily: 'var(--font-playfair)' }}>
+                          <span className="mr-1 font-bold">{icon}</span>{text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 <div className="flex flex-col gap-3">
-                  {!isIOS && (
+                  {!isIOS && deferredPrompt && (
                     <button onClick={handleInstall}
                       className="w-full py-3.5 rounded-xl font-bold text-sm"
                       style={{
@@ -173,7 +162,7 @@ export default function InstallPrompt() {
                         letterSpacing: '1px',
                         boxShadow: '0 4px 16px rgba(180,130,40,0.35)',
                       }}>
-                      Install Now
+                      Quick Install ✨
                     </button>
                   )}
                   <button onClick={() => setShow(false)}
@@ -184,7 +173,7 @@ export default function InstallPrompt() {
                       fontFamily: 'var(--font-cinzel)',
                       letterSpacing: '0.5px',
                     }}>
-                    {isIOS ? 'Samajh Gaya' : 'Maybe Later'}
+                    Samajh Gaya
                   </button>
                 </div>
               </div>
