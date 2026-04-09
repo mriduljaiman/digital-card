@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 
 interface MusicPlayerProps {
@@ -60,7 +61,7 @@ export default function MusicPlayer({ enabled, musicUrl }: MusicPlayerProps) {
 
   if (!visible) return null;
 
-  return (
+  return createPortal(
     <motion.button
       onClick={togglePlay}
       className="fixed bottom-6 left-5 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl relative"
@@ -71,7 +72,7 @@ export default function MusicPlayer({ enabled, musicUrl }: MusicPlayerProps) {
       }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 1.5, type: 'spring' }}
+      transition={{ delay: 0.3, type: 'spring' }}
       title={playing ? 'Pause music' : 'Play music'}
     >
       <motion.div
@@ -81,6 +82,7 @@ export default function MusicPlayer({ enabled, musicUrl }: MusicPlayerProps) {
         transition={{ duration: 1.8, repeat: Infinity }}
       />
       <span className="text-2xl relative z-10">{playing ? '⏸' : '🎵'}</span>
-    </motion.button>
+    </motion.button>,
+    document.body
   );
 }

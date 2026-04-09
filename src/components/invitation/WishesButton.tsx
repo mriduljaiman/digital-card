@@ -1,5 +1,6 @@
 'use client';
 
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 
 interface WishesButtonProps {
@@ -8,7 +9,7 @@ interface WishesButtonProps {
 }
 
 export default function WishesButton({ onClick, count }: WishesButtonProps) {
-  return (
+  return createPortal(
     <motion.button
       onClick={onClick}
       className="fixed right-4 z-40 flex flex-col items-center justify-center"
@@ -28,7 +29,6 @@ export default function WishesButton({ onClick, count }: WishesButtonProps) {
     >
       <span style={{ fontSize: 22, lineHeight: 1 }}>💌</span>
 
-      {/* Count badge */}
       {count > 0 && (
         <motion.div
           className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-white"
@@ -46,6 +46,7 @@ export default function WishesButton({ onClick, count }: WishesButtonProps) {
           {count > 99 ? '99+' : count}
         </motion.div>
       )}
-    </motion.button>
+    </motion.button>,
+    document.body
   );
 }

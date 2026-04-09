@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { WeddingData } from '@/types/wedding';
 import EventSection from './EventSection';
 import FamilySection from './FamilySection';
@@ -161,27 +162,30 @@ export default function InvitationCard({ data, onBack, onLocation }: InvitationC
       {/* Wishes button — right side, vertically centered */}
       <WishesButton onClick={handleWishesOpen} count={wishCount} />
 
-      {/* Call button — bottom right */}
-      <motion.a
-        href="tel:9529787596"
-        className="fixed bottom-6 right-5 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl"
-        style={{
-          background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
-          boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
-        }}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1.3, type: 'spring' }}
-        title="Call us"
-      >
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{ background: 'rgba(76,175,80,0.3)' }}
-          animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity }}
-        />
-        <span className="text-2xl relative z-10">📞</span>
-      </motion.a>
+      {/* Call button — bottom right (portalled to body) */}
+      {createPortal(
+        <motion.a
+          href="tel:9529787596"
+          className="fixed bottom-6 right-5 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl"
+          style={{
+            background: 'linear-gradient(135deg, #2e7d32, #4caf50)',
+            boxShadow: '0 8px 24px rgba(46,125,50,0.5)',
+          }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3, type: 'spring' }}
+          title="Call us"
+        >
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{ background: 'rgba(76,175,80,0.3)' }}
+            animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+          />
+          <span className="text-2xl relative z-10">📞</span>
+        </motion.a>,
+        document.body
+      )}
 
       {/* Music Player — bottom left */}
       {data.musicEnabled && (
