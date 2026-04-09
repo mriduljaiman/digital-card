@@ -74,14 +74,12 @@ export default function MusicPlayer({ enabled, musicUrl }: MusicPlayerProps) {
       transition={{ delay: 1.5, type: 'spring' }}
       title={playing ? 'Pause music' : 'Play music'}
     >
-      {playing && (
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{ background: 'rgba(212,175,55,0.35)' }}
-          animate={{ scale: [1, 1.6], opacity: [0.6, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
-      )}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: 'rgba(212,175,55,0.35)' }}
+        animate={{ scale: [1, 1.55], opacity: [0.5, 0] }}
+        transition={{ duration: 1.8, repeat: Infinity }}
+      />
       <span className="text-2xl relative z-10">{playing ? '⏸' : '🎵'}</span>
     </motion.button>
   );
