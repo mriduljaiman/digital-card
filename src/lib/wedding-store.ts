@@ -98,7 +98,7 @@ export const defaultWeddingData: WeddingData = {
   photos: ['/photos/wedding-photo.jpeg'],
   homeAddress: '148-B Swarnpuri Kanak Vrindavan, Sirsi Road, Jaipur',
   musicEnabled: true,
-  musicUrl: '/audio/mangalye.mp3',
+  musicUrl: '/audio/weddingbeats.mp3',
 };
 
 export function getWeddingData(): WeddingData {
